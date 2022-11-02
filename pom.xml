@@ -13,6 +13,8 @@
         <module>robot-filter-core</module>
         <module>robot-filter-notice</module>
         <module>robot-filter-web</module>
+        <module>robot-filter-servlet</module>
+        <module>robot-filter-spring-cloud-gateway</module>
     </modules>
     <name>robot-filter-spring-boot-starter</name>
     <description>web robot filter</description>
