@@ -6,24 +6,17 @@
         <artifactId>robot-filter-spring-boot-starter</artifactId>
         <groupId>net.jlxxw</groupId>
         <version>1.0.0.20221102</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>robot-filter-web</artifactId>
+    <artifactId>robot-filter-data-share</artifactId>
     <version>1.0.0.20221102</version>
-    <packaging>jar</packaging>
-    <description>web robot filter web ui and controller </description>
-
 
     <dependencies>
         <dependency>
             <groupId>net.jlxxw</groupId>
-            <artifactId>robot-filter-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.jlxxw</groupId>
-            <artifactId>robot-filter-data-share</artifactId>
+            <artifactId>robot-filter-common</artifactId>
         </dependency>
     </dependencies>
+
 </project>
