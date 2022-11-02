@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>robot-filter-spring-boot-starter</artifactId>
+        <groupId>net.jlxxw</groupId>
+        <version>1.0.0.20221102</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>robot-filter-notice</artifactId>
+    <version>1.0.0.20221102</version>
+    <packaging>jar</packaging>
+    <name>robot-filter-notice</name>
+    <description>use event,send notice</description>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>net.jlxxw</groupId>
+            <artifactId>robot-filter-config</artifactId>
+        </dependency>
+    </dependencies>
+</project>
