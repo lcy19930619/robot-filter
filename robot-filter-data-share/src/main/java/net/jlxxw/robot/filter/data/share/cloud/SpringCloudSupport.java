@@ -6,16 +6,16 @@ import java.util.stream.Collectors;
 import net.jlxxw.robot.filter.data.share.component.DiscoveryClientAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-03 5:11 PM
  */
-@Primary
+@ConditionalOnMissingBean(DiscoveryClientAdapter.class)
 @Component
 public class SpringCloudSupport implements DiscoveryClientAdapter {
 

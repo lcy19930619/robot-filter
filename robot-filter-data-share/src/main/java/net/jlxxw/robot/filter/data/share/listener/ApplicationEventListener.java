@@ -19,7 +19,6 @@ public class ApplicationEventListener {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Async("robotFilterThreadpool")
     @EventListener(ReceiveRequestEvent.class)
     public void receiveRequestEventListener(ReceiveRequestEvent event){
         RequestProtocol convert = convert(event);

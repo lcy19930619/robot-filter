@@ -15,6 +15,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-gateway-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>net.jlxxw</groupId>
             <artifactId>robot-filter-core</artifactId>
         </dependency>

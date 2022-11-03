@@ -30,6 +30,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -38,6 +39,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * @author chunyang.leng
  * @date 2022-11-03 3:04 PM
  */
+@ConditionalOnBean(DiscoveryClientAdapter.class)
 @EnableAsync
 @ComponentScan("net.jlxxw.robot.filter.data.share")
 public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
