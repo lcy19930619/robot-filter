@@ -60,6 +60,18 @@ public class RobotFilterProperties {
      */
     private EncryptProperties encrypt = new EncryptProperties();
 
+    /**
+     * data share properties
+     */
+    private DataShareProperties dataShareProperties = new DataShareProperties();
+
+    public DataShareProperties getDataShareProperties() {
+        return dataShareProperties;
+    }
+
+    public void setDataShareProperties(DataShareProperties dataShareProperties) {
+        this.dataShareProperties = dataShareProperties;
+    }
 
     public List<FilterProperties> getFilters() {
         return filters;

@@ -1,6 +1,10 @@
 package net.jlxxw.robot.filter.data.share.listener;
 
+import net.jlxxw.robot.filter.common.event.NettySendDataEvent;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
+import net.jlxxw.robot.filter.data.share.netty.protocol.protobuf.RequestProtocol;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -12,10 +16,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationEventListener {
 
-    @Async
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Async("robotFilterThreadpool")
     @EventListener(ReceiveRequestEvent.class)
     public void receiveRequestEventListener(ReceiveRequestEvent event){
-
+        RequestProtocol convert = convert(event);
+        applicationContext.publishEvent(new NettySendDataEvent(convert));
     }
 
+
+    public RequestProtocol convert(ReceiveRequestEvent event){
+        return  RequestProtocol.newBuilder().build();
+    }
 }

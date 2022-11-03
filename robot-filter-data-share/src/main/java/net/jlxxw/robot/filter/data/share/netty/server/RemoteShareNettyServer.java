@@ -8,8 +8,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.ssl.SslContext;
 import javax.annotation.PostConstruct;
+import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ public class RemoteShareNettyServer {
     private static final Logger logger = LoggerFactory.getLogger(RemoteShareNettyServer.class);
 
     @Autowired
-    private RemoteShareChannelHandler javaRedisChannelHandler;
-
-    private SslContext sslCtx = null;
+    private RemoteShareChannelHandler remoteShareChannelHandler;
+    @Autowired
+    private RobotFilterProperties robotFilterProperties;
     /**
      * 启动netty 监听端口
      */
@@ -41,21 +41,17 @@ public class RemoteShareNettyServer {
                 b.group(bossGroup, workGroup)
                         .channel(NioServerSocketChannel.class)
                         //最大客户端连接数默认值为1024
-                        .option(ChannelOption.SO_BACKLOG, 1024)
+                        .option(ChannelOption.SO_BACKLOG, robotFilterProperties.getDataShareProperties().getServerMaxConnections())
                         .childHandler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel sc) throws Exception {
-                                if (sslCtx != null ){
-                                    // 添加SSL安装验证
-                                    sc.pipeline().addFirst(sslCtx.newHandler(sc.alloc()));
-                                }
                                 sc.pipeline().addLast(new ServerDecoder());
                                 sc.pipeline().addLast(new ServerEncoder());
-                                sc.pipeline().addLast(javaRedisChannelHandler);
+                                sc.pipeline().addLast(remoteShareChannelHandler);
                             }
                         });
 
-                ChannelFuture f = b.bind(9999).sync();
+                ChannelFuture f = b.bind(robotFilterProperties.getDataShareProperties().getPort()).sync();
                 if (f.isSuccess()) {
                     logger.info("开启 netty 监听器");
                 }
@@ -68,7 +64,7 @@ public class RemoteShareNettyServer {
             }
         });
         thread.setDaemon(false);
-        thread.setName("java-redis-server");
+        thread.setName("robot-data-share-server");
         thread.start();
     }
 }
