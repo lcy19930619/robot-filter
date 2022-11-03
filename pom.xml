@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.jlxxw</groupId>
-    <artifactId>robot-filter-spring-boot-starter</artifactId>
+    <artifactId>robot-filter</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0.20221102</version>
     <modules>
@@ -17,9 +17,9 @@
         <module>robot-filter-data-share</module>
         <module>robot-filter-web</module>
     </modules>
-    <name>robot-filter-spring-boot-starter</name>
+    <name>robot-filter</name>
     <description>web robot filter</description>
-    <url>https://github.com/lcy19930619/robot-filter-spring-boot-starter</url>
+    <url>https://github.com/lcy19930619/robot-filter</url>
 
     <licenses>
         <license>
@@ -43,13 +43,13 @@
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/lcy19930619/robot-filter-spring-boot-starter/issues</url>
+        <url>https://github.com/lcy19930619/robot-filter/issues</url>
     </issueManagement>
 
     <scm>
-        <connection>scm:git@github.com:lcy19930619/robot-filter-spring-boot-starter.git</connection>
-        <developerConnection>scm:git@github.com:lcy19930619/robot-filter-spring-boot-starter.git</developerConnection>
-        <url>git@github.com:lcy19930619/robot-filter-spring-boot-starter.git</url>
+        <connection>scm:git@github.com:lcy19930619/robot-filter.git</connection>
+        <developerConnection>scm:git@github.com:lcy19930619/robot-filter.git</developerConnection>
+        <url>git@github.com:lcy19930619/robot-filter.git</url>
     </scm>
 
     <properties>
