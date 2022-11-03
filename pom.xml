@@ -24,7 +24,7 @@
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
         </license>
     </licenses>
 
@@ -66,6 +66,9 @@
         <mockito-all.version>1.9.0</mockito-all.version>
         <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+        <grpc.version>1.23.0</grpc.version>
+        <protobuf-java.version>3.17.3</protobuf-java.version>
+        <robot-filter.version>1.0.0.20221102</robot-filter.version>
     </properties>
 
 
@@ -74,67 +77,67 @@
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-common</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-config</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-notice</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-core</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-web</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-data-share</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-servlet</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-spring-cloud-gateway</artifactId>
-                <version>1.0.0.20221102</version>
+                <version>${robot-filter.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.protobuf</groupId>
                 <artifactId>protobuf-java</artifactId>
-                <version>3.17.3</version>
+                <version>${protobuf-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-protobuf</artifactId>
-                <version>1.23.0</version>
+                <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-stub</artifactId>
-                <version>1.23.0</version>
+                <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-netty</artifactId>
-                <version>1.23.0</version>
+                <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.grpc</groupId>
                 <artifactId>grpc-netty-shaded</artifactId>
-                <version>1.23.0</version>
+                <version>${grpc.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -177,13 +180,6 @@
                 <version>${mysql-connector-java.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <optional>true</optional>
-            </dependency>
-
-
-            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>${xercesImpl.version}</version>
@@ -207,6 +203,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
 
     <build>
         <plugins>
@@ -280,6 +277,15 @@
                 </executions>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <artifactId>protobuf-maven-plugin</artifactId>
+                    <version>0.6.1</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
     <distributionManagement>
         <snapshotRepository>

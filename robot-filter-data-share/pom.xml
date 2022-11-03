@@ -64,7 +64,6 @@
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
                 <configuration>
                     <pluginId>grpc-java</pluginId>
                     <protoSourceRoot>src/main/resources/protobuf</protoSourceRoot>
