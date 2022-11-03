@@ -55,6 +55,12 @@ public class RobotFilterProperties {
      */
     private Set<String> globalAuthorizationWhitelist = new LinkedHashSet<>();
 
+    /**
+     * Encrypt Properties
+     */
+    private EncryptProperties encrypt = new EncryptProperties();
+
+
     public List<FilterProperties> getFilters() {
         return filters;
     }
@@ -109,5 +115,13 @@ public class RobotFilterProperties {
 
     public void setEnabledInlineFilters(boolean enabledInlineFilters) {
         this.enabledInlineFilters = enabledInlineFilters;
+    }
+
+    public EncryptProperties getEncrypt() {
+        return encrypt;
+    }
+
+    public void setEncrypt(EncryptProperties encrypt) {
+        this.encrypt = encrypt;
     }
 }

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package net.jlxxw;
+
+import "RequestProtocolEnum.proto";
+
+option java_package="net.jlxxw.robot.filter.data.share.netty.protocol.protobuf";
+option java_multiple_files = true;
+
+
+
+// 请求协议头
+message RequestProtocolHeader {
+  // 请求Id
+  string requestId = 1;
+
+  // 密码
+  string password = 2;
+
+  // 请求头协议类型
+  RequestProtocolEnum requestProtocolEnum = 3;
+}

@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package net.jlxxw;
+option java_package = "net.jlxxw.robot.filter.data.share.netty.protocol.protobuf";
+option java_multiple_files = true;
+
+// 应答协议枚举
+enum ResponseProtocolEnum
+{
+  TX_DONE = 0; // 发送完毕，（临时占位）
+
+  ILLEGAL_PROTOCOL_HEADER = 1; // 非法的协议头
+
+  REQUEST_PROTOCOL_IS_NOT_NULL = 2; // 请求协议不能为空
+
+  NO_SUCH_REQUEST_ENUM = 3; // 不支持的请求类型枚举
+
+  NO_AUTH = 4; // 没权限
+
+  REQUEST_ID_IS_NOT_NULL = 5; // 请求id 不能为空
+
+  REQUEST_HEADER_IS_NOT_NULL = 6; // 请求头不能为空
+
+  REMOTE_SERVER_ERROR = 7; // 远程服务器出现错误
+
+  FUNCTION_PASSWORD = 8; // 应用密钥下发
+
+
+
+
+  // 鼠标数据上传
+  MOUSE_DATA_UPLOAD_DONE = 9;
+  // 鼠标数据加密上传
+  MOUSE_DATA_ENCRYPT_UPLOAD_DONE = 10;
+  // 鼠标数据下载
+  MOUSE_DATA_DOWNLOAD_DONE = 11;
+  // 鼠标数据加密下载
+  MOUSE_DATA_ENCRYPT_DOWNLOAD_DONE = 12;
+  // 鼠标密钥初始化
+  MOUSE_PASSWORD_INIT_DONE = 13;
+
+
+
+  // 键盘数据上传
+  KEY_MAP_DATA_UPLOAD_DONE = 14;
+  // 键盘数据加密上传
+  KEY_MAP_DATA_ENCRYPT_UPLOAD_DONE = 15;
+  // 键盘数据下载
+  KEY_MAP_DATA_DOWNLOAD_DONE = 16;
+  // 键盘数据加密下载
+  KEY_MAP_DATA_ENCRYPT_DOWNLOAD_DONE = 17;
+  // 键盘密钥初始化
+  KEY_MAP_PASSWORD_INIT_DONE = 18;
+
+
+  // 屏幕数据上传
+  SCREEN_VIDEO_DATA_UPLOAD_DONE = 19;
+  // 屏幕数据下载
+  SCREEN_VIDEO_DATA_DOWNLOAD_DONE = 20;
+  // 屏幕数据加密上传
+  SCREEN_VIDEO_DATA_ENCRYPT_UPLOAD_DONE = 21;
+  // 屏幕数据加密下载
+  SCREEN_VIDEO_DATA_ENCRYPT_DOWNLOAD_DONE = 22;
+  // 屏幕视频密钥初始化
+  SCREEN_VIDEO_PASSWORD_INIT_DONE = 23;
+
+
+  // 摄像头数据上传
+  CAMERA_VIDEO_DATA_UPLOAD_DONE = 24;
+  // 摄像头数据加密上传
+  CAMERA_VIDEO_DATA_ENCRYPT_UPLOAD_DONE = 25;
+  // 摄像头数据下载
+  CAMERA_VIDEO_DATA_DOWNLOAD_DONE = 26;
+  // 摄像头数据加密下载
+  CAMERA_VIDEO_DATA_ENCRYPT_DOWNLOAD_DONE = 27;
+  // 摄像头密钥初始化
+  CAMERA_VIDEO_PASSWORD_INIT_DONE = 28;
+
+  // 登录成功
+  LOGIN_SUCCESS= 29;
+  // 登录失败
+  LOGIN_FAILED = 30;
+
+  // 功能配置参数
+  FUNCTION_PROPERTIES_DONE = 31;
+
+}

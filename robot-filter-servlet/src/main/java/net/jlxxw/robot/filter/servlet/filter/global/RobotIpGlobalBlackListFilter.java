@@ -1,8 +1,6 @@
 package net.jlxxw.robot.filter.servlet.filter.global;
 
 import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -10,7 +8,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
+import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import net.jlxxw.robot.filter.servlet.utils.IpUtils;
@@ -24,7 +22,7 @@ public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
     @Autowired
     private IpUtils ipUtils;
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private CacheService cacheService;
 
     public RobotIpGlobalBlackListFilter(FilterProperties filterProperties) {
         super(filterProperties);
@@ -46,13 +44,8 @@ public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String clientIp = ipUtils.getIpAddress(httpServletRequest);
 
-        try {
-            Set<String> globalBlackList = (Set<String>) cache.get("globalBlackList", () -> robotFilterProperties.getGlobalIpBlacklist());
-            if (globalBlackList.contains(clientIp)){
-                throw new RuleException("Global blacklist");
-            }
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+        if (cacheService.getGlobalIpBlacklist().contains(clientIp)){
+            throw new RuleException("Global blacklist");
         }
     }
 

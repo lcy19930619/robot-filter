@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package net.jlxxw;
+
+import "ResponseProtocolEnum.proto";
+
+option java_package="net.jlxxw.robot.filter.data.share.netty.protocol.protobuf";
+option java_multiple_files = true;
+
+
+
+// 应答协议头
+message ResponseProtocolHeader {
+  // 请求Id
+  string requestId = 1;
+
+  // 应答头协议类型
+  ResponseProtocolEnum responseProtocolEnum = 2;
+}

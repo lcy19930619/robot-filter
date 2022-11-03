@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter.global;
+package net.jlxxw.robot.filter.servlet.filter;
 
 import java.io.IOException;
 import java.util.Set;
@@ -9,27 +9,22 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
-import net.jlxxw.robot.filter.core.cache.CacheService;
+import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import net.jlxxw.robot.filter.servlet.context.WebContext;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
-import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ *
+ * host check
  * @author chunyang.leng
  * @date 2022-11-03 2:10 PM
  */
-public class RobotIpGlobalWhiteListFilter extends AbstractFilterTemplate {
+public class RobotHttpHostFilter extends AbstractFilterTemplate {
     @Autowired
-    private IpUtils ipUtils;
-    @Autowired
-    private RobotFilterProperties robotFilterProperties;
-    @Autowired
-    private CacheService cacheService;
+    private HttpHeaderCheck headerCheck;
 
-    public RobotIpGlobalWhiteListFilter(FilterProperties filterProperties) {
+    public RobotHttpHostFilter(FilterProperties filterProperties) {
         super(filterProperties);
     }
 
@@ -47,11 +42,9 @@ public class RobotIpGlobalWhiteListFilter extends AbstractFilterTemplate {
     protected void filter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException, RuleException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String clientIp = ipUtils.getIpAddress(httpServletRequest);
-
-        Set<String> globalList = cacheService.getGlobalIpWhiteList();
-        // set check context
-        WebContext.setInWhiteList(globalList.contains(clientIp));
+        String referer = httpServletRequest.getHeader("Host");
+        Set<String> set = getFilterProperties().getRule().getWhitelist();
+        headerCheck.checkReferer(referer,set);
     }
 
     /**

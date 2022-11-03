@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package net.jlxxw;
+option java_package="net.jlxxw.robot.filter.data.share.netty.protocol.protobuf";
+option java_multiple_files = true;
+
+// 请求头协议类型
+enum RequestProtocolEnum
+{
+
+  // 发送完毕（临时占位）
+  RX_DONE = 0;
+
+  // 身份验证
+  LOGIN = 1;
+
+  // 获取功能配置参数
+  FUNCTION_PROPERTIES = 2;
+}

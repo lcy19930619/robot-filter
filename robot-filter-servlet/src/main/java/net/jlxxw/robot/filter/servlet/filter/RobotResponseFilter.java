@@ -1,7 +1,6 @@
 package net.jlxxw.robot.filter.servlet.filter;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -9,26 +8,20 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
-import net.jlxxw.robot.filter.config.properties.ResponseProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * handler RuleException
  * @author chunyang.leng
  * @date 2022-11-03 12:45 PM
  */
 public class RobotResponseFilter extends AbstractFilterTemplate {
-    private static final String RESPONSE_PROPERTIES_KEY = "responseProperties";
-    private static final String ENABLED_RESPONSE_REJECT_MESSAGE_KEY = "returnRejectMessage";
-    private static final String HTTP_CODE_KEY = "httpCode";
-    private static final String CONTENT_TYPE_KEY = "contentType";
 
     @Autowired
     private RobotFilterProperties robotFilterProperties;
-
-
 
     public RobotResponseFilter(FilterProperties filterProperties) {
         super(filterProperties);
@@ -89,27 +82,19 @@ public class RobotResponseFilter extends AbstractFilterTemplate {
     protected void filter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException, RuleException {
         try {
-
             chain.doFilter(request, response);
         } catch (RuleException e) {
-            try {
-                boolean returnRejectMessage = (boolean)cache.get(ENABLED_RESPONSE_REJECT_MESSAGE_KEY, () -> {
-                    ResponseProperties responseProperties = robotFilterProperties.getResponse();
-                    return responseProperties.isReturnRejectMessage();
-                });
+            boolean returnRejectMessage = robotFilterProperties.getResponse().isReturnRejectMessage();
 
-                int httpCode = (int)cache.get(HTTP_CODE_KEY, () -> getFilterProperties().getRule().getHttpResponseCode());
+            int httpCode = getFilterProperties().getRule().getHttpResponseCode();
 
-                String contentType = (String)cache.get(HTTP_CODE_KEY, () -> getFilterProperties().getRule().getContentType());
+            String contentType = getFilterProperties().getRule().getContentType();
 
-                HttpServletResponse servletResponse = (HttpServletResponse)response;
-                servletResponse.setContentType(contentType);
-                servletResponse.setStatus(httpCode);
-                if (returnRejectMessage){
-                    servletResponse.getWriter().println(e.getMessage());
-                }
-            } catch (ExecutionException ex) {
-                throw new RuntimeException(ex);
+            HttpServletResponse servletResponse = (HttpServletResponse) response;
+            servletResponse.setContentType(contentType);
+            servletResponse.setStatus(httpCode);
+            if (returnRejectMessage) {
+                servletResponse.getWriter().println(e.getMessage());
             }
 
         }

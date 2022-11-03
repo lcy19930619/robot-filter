@@ -2,7 +2,6 @@ package net.jlxxw.robot.filter.servlet.filter;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -16,6 +15,7 @@ import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
+ * referer check
  * @author chunyang.leng
  * @date 2022-11-03 2:10 PM
  */
@@ -42,13 +42,8 @@ public class RobotHttpRefererFilter extends AbstractFilterTemplate {
         FilterChain chain) throws IOException, ServletException, RuleException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String referer = httpServletRequest.getHeader("Referer");
-
-        try {
-            Set<String> set = (Set<String>)cache.get("key",()-> getFilterProperties().getRule().getWhitelist());
-            headerCheck.checkReferer(referer,set);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        Set<String> set = getFilterProperties().getRule().getWhitelist();
+        headerCheck.checkReferer(referer,set);
     }
 
     /**
