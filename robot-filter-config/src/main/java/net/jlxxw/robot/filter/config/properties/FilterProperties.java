@@ -1,12 +1,11 @@
 package net.jlxxw.robot.filter.config.properties;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-
 import java.util.Set;
+import net.jlxxw.robot.filter.config.rule.Rule;
 
 /**
  * simple filter config
+ * @author lcy
  */
 public class FilterProperties {
     /**
@@ -19,7 +18,7 @@ public class FilterProperties {
     private boolean enable = true;
 
     /**
-     * url pattern
+     * url pattern,un support refresh
      */
     private Set<String> urlPattern;
 
@@ -32,6 +31,11 @@ public class FilterProperties {
      * sort by order，small priority
      */
     private int order;
+
+    /**
+     * robot filter rule
+     */
+    private Rule rule;
 
     public String getName() {
         return name;
@@ -71,5 +75,13 @@ public class FilterProperties {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    public Rule getRule() {
+        return rule;
+    }
+
+    public void setRule(Rule rule) {
+        this.rule = rule;
     }
 }
