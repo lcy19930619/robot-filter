@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import javax.servlet.Filter;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
@@ -32,6 +33,8 @@ public class RobotServletFilterRunner implements ApplicationRunner {
     private RobotFilterProperties robotFilterProperties;
     @Autowired
     private BeanFactory beanFactory;
+    @Autowired
+    private LogUtils logUtils;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -77,8 +80,7 @@ public class RobotServletFilterRunner implements ApplicationRunner {
                     filterRegistrationBean.setFilter((Filter)bean);
                 }
                 defaultListableBeanFactory.registerSingleton(beanName + name ,bean);
-                logger.info("register servlet robot filter :{}",beanName);
-
+                logUtils.info(logger,"register servlet robot filter :{}",beanName);
             }
         }
 

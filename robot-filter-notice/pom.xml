@@ -24,7 +24,7 @@
     <dependencies>
         <dependency>
             <groupId>net.jlxxw</groupId>
-            <artifactId>robot-filter-config</artifactId>
+            <artifactId>robot-filter-common</artifactId>
         </dependency>
     </dependencies>
 </project>
