@@ -21,7 +21,10 @@
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>net.jlxxw</groupId>
+            <artifactId>robot-filter-config</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
