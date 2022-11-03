@@ -10,4 +10,12 @@ public class ResponseProperties {
      * return reject message
      */
     private boolean returnRejectMessage = false;
+
+    public boolean isReturnRejectMessage() {
+        return returnRejectMessage;
+    }
+
+    public void setReturnRejectMessage(boolean returnRejectMessage) {
+        this.returnRejectMessage = returnRejectMessage;
+    }
 }

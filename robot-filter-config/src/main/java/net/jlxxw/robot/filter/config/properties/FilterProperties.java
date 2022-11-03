@@ -1,7 +1,6 @@
 package net.jlxxw.robot.filter.config.properties;
 
 import java.util.Set;
-import net.jlxxw.robot.filter.config.rule.Rule;
 
 /**
  * simple filter config
@@ -33,9 +32,9 @@ public class FilterProperties {
     private int order;
 
     /**
-     * robot filter rule
+     * robot filter ruleProperties
      */
-    private Rule rule;
+    private RuleProperties rule;
 
     public String getName() {
         return name;
@@ -77,11 +76,11 @@ public class FilterProperties {
         this.order = order;
     }
 
-    public Rule getRule() {
+    public RuleProperties getRule() {
         return rule;
     }
 
-    public void setRule(Rule rule) {
+    public void setRule(RuleProperties rule) {
         this.rule = rule;
     }
 }
