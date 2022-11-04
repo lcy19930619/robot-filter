@@ -1,9 +1,9 @@
 package net.jlxxw.robot.filter.servlet.filter.decision;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -42,7 +42,7 @@ public class RobotDecisionFilter implements Filter {
      * key is rule name
      * value is SimpleCountUtils
      */
-    private Map<String, SimpleCountUtils> rulePass = new HashMap<String, SimpleCountUtils>();
+    private Map<String, SimpleCountUtils> rulePass = new ConcurrentHashMap<>();
 
     @PostConstruct
     private void init() {
@@ -123,16 +123,15 @@ public class RobotDecisionFilter implements Filter {
             if (!CollectionUtils.isEmpty(rules)) {
 
                 for (RuleProperties rule : rules) {
-                    long interval = rule.getInterval();
                     int maxAllow = rule.getMaxAllow();
                     String name = rule.getName();
 
-                    Integer qpsByClientId = countCurrentPassByClientId(clientId, name);
-                    Integer qpsByIp = countCurrentPassByIp(ip, name);
-                    if (qpsByClientId != null && qpsByClientId > maxAllow) {
+                    int passByClientId = countCurrentPassByClientId(clientId, name);
+                    int passByByIp = countCurrentPassByIp(ip, name);
+                    if (passByClientId > maxAllow) {
                         throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
                     }
-                    if (qpsByIp != null && qpsByIp > maxAllow) {
+                    if (passByByIp > maxAllow) {
                         throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
                     }
                     incIp(ip, name);
@@ -189,8 +188,8 @@ public class RobotDecisionFilter implements Filter {
      * @param ruleName name of the rule
      * @return qps
      */
-    protected Integer countCurrentPassByIp(String ip, String ruleName) {
-        return null;
+    protected int countCurrentPassByIp(String ip, String ruleName) {
+        return 0;
     }
 
     /**
@@ -200,8 +199,8 @@ public class RobotDecisionFilter implements Filter {
      * @param ruleName name of the rule
      * @return qps
      */
-    protected Integer countCurrentPassByClientId(String clientId, String ruleName) {
-        return null;
+    protected int countCurrentPassByClientId(String clientId, String ruleName) {
+        return 0;
     }
 
     public FilterProperties getFilterProperties() {
