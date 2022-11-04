@@ -138,8 +138,7 @@ public class RobotDecisionFilter implements Filter {
             String clientId = RobotServletFilterWebContext.getClientId();
             String host = RobotServletFilterWebContext.getHost();
             String ip = RobotServletFilterWebContext.getIp();
-            ReceiveRequestEvent event = new ReceiveRequestEvent(ip, host, clientId, filterProperties.getName());
-            applicationContext.publishEvent(event);
+
 
             List<RuleProperties> rules = filterProperties.getRules();
             if (!CollectionUtils.isEmpty(rules)) {
@@ -183,10 +182,13 @@ public class RobotDecisionFilter implements Filter {
                     }
                     incIp(ip, name);
                     incClientId(clientId, name);
+                    ReceiveRequestEvent event = new ReceiveRequestEvent(ip, host, clientId, filterProperties.getName(),name);
+                    applicationContext.publishEvent(event);
                 }
             }
 
         }
+        chain.doFilter(request, response);
 
     }
 
