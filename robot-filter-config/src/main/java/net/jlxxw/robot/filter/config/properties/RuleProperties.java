@@ -12,9 +12,19 @@ import java.util.Set;
 public class RuleProperties {
 
     /**
-     * robot allow pass max qps
+     * rule name
      */
-    private int maxQps = 50;
+    private String name;
+
+    /**
+     * interval window
+     */
+    private long interval = 1000;
+
+    /**
+     * robot allow pass max value
+     */
+    private int maxAllow = 50;
 
     /**
      * allow to add blacklisted
@@ -54,12 +64,25 @@ public class RuleProperties {
      */
     private String contentType = "application/json";
 
-    public int getMaxQps() {
-        return maxQps;
+    /**
+     * return reject message
+     */
+    private boolean returnRejectMessage = false;
+
+    public long getInterval() {
+        return interval;
     }
 
-    public void setMaxQps(int maxQps) {
-        this.maxQps = maxQps;
+    public void setInterval(long interval) {
+        this.interval = interval;
+    }
+
+    public int getMaxAllow() {
+        return maxAllow;
+    }
+
+    public void setMaxAllow(int maxAllow) {
+        this.maxAllow = maxAllow;
     }
 
     public boolean isAllowAddBlacklisted() {
@@ -116,5 +139,21 @@ public class RuleProperties {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isReturnRejectMessage() {
+        return returnRejectMessage;
+    }
+
+    public void setReturnRejectMessage(boolean returnRejectMessage) {
+        this.returnRejectMessage = returnRejectMessage;
     }
 }

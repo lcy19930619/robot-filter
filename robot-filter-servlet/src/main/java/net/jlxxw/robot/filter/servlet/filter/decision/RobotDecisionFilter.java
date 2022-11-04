@@ -1,23 +1,65 @@
 package net.jlxxw.robot.filter.servlet.filter.decision;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
+import net.jlxxw.robot.filter.config.properties.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
+import net.jlxxw.robot.filter.core.limit.SimpleCountUtils;
+import net.jlxxw.robot.filter.core.vo.RobotClientIdVO;
+import net.jlxxw.robot.filter.core.vo.RobotIpVO;
+import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 
 /**
+ * todo done by lcy 2022/11/05
  * if request form robot,this filter decision reject
- * todo ip qps limit, client id qps limit
+ *
  * @author chunyang.leng
  * @date 2022-11-04 11:32 AM
  */
-public class RobotDecisionFilter extends AbstractFilterTemplate {
+public class RobotDecisionFilter implements Filter {
+
+    private FilterProperties filterProperties;
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    /**
+     * key is rule name
+     * value is SimpleCountUtils
+     */
+    private Map<String, SimpleCountUtils> rulePass = new HashMap<String, SimpleCountUtils>();
+
+    @PostConstruct
+    private void init() {
+        List<RuleProperties> rules = filterProperties.getRules();
+        if (CollectionUtils.isEmpty(rules)) {
+            return;
+        }
+        rules.forEach(x -> {
+            if (StringUtils.isBlank(x.getName())) {
+                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name is null !!!");
+            }
+            if (rulePass.containsKey(x.getName())) {
+                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name '" + x.getName() + "' is repeat !!!");
+            }
+            rulePass.put(x.getName(), new SimpleCountUtils(x.getInterval()));
+        });
+    }
 
     /**
      * Called by the web container to indicate to a filter that it is being
@@ -39,7 +81,7 @@ public class RobotDecisionFilter extends AbstractFilterTemplate {
      * @throws ServletException if the initialisation fails
      */
     @Override public void init(FilterConfig filterConfig) throws ServletException {
-        super.init(filterConfig);
+
     }
 
     /**
@@ -58,22 +100,47 @@ public class RobotDecisionFilter extends AbstractFilterTemplate {
      * The default implementation is a NO-OP.
      */
     @Override public void destroy() {
-        super.destroy();
+
     }
 
-    /**
-     * filter function
-     *
-     * @param request
-     * @param response
-     * @param chain
-     * @param filterProperties
-     * @throws IOException
-     * @throws ServletException
-     * @throws RuleException    Robot limit triggered
-     */
-    @Override protected void filter(ServletRequest request, ServletResponse response, FilterChain chain,
-        FilterProperties filterProperties) throws IOException, ServletException, RuleException {
+    public void doFilter(ServletRequest request, ServletResponse response,
+        FilterChain chain) throws IOException, ServletException {
+        if (!filterProperties.isEnable()) {
+            chain.doFilter(request, response);
+            return;
+        }
+        boolean inWhiteList = RobotServletFilterWebContext.inWhiteList();
+        if (inWhiteList) {
+            chain.doFilter(request, response);
+        } else {
+            String clientId = RobotServletFilterWebContext.getClientId();
+            String host = RobotServletFilterWebContext.getHost();
+            String ip = RobotServletFilterWebContext.getIp();
+            ReceiveRequestEvent event = new ReceiveRequestEvent(ip, host, clientId, filterProperties.getName());
+            applicationContext.publishEvent(event);
+
+            List<RuleProperties> rules = filterProperties.getRules();
+            if (!CollectionUtils.isEmpty(rules)) {
+
+                for (RuleProperties rule : rules) {
+                    long interval = rule.getInterval();
+                    int maxAllow = rule.getMaxAllow();
+                    String name = rule.getName();
+
+                    Integer qpsByClientId = countCurrentPassByClientId(clientId, name);
+                    Integer qpsByIp = countCurrentPassByIp(ip, name);
+                    if (qpsByClientId != null && qpsByClientId > maxAllow) {
+                        throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
+                    }
+                    if (qpsByIp != null && qpsByIp > maxAllow) {
+                        throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
+                    }
+                    incIp(ip, name);
+                    incClientId(clientId, name);
+                }
+            }
+
+        }
 
     }
 
@@ -81,17 +148,19 @@ public class RobotDecisionFilter extends AbstractFilterTemplate {
      * current filter increase the client id counter once
      *
      * @param clientId client id
+     * @param ruleName name of the rule
      */
-    @Override protected void incClientId(String clientId) {
+    protected void incClientId(String clientId, String ruleName) {
 
     }
 
     /**
      * current filter increase the ip counter once
      *
-     * @param ip client ip
+     * @param ip       client ip
+     * @param ruleName rule name
      */
-    @Override protected void incIp(String ip) {
+    protected void incIp(String ip, String ruleName) {
 
     }
 
@@ -100,7 +169,7 @@ public class RobotDecisionFilter extends AbstractFilterTemplate {
      *
      * @return key: client id,value: qps
      */
-    @Override protected Map<String, Integer> countClientId() {
+    protected RobotClientIdVO countClientId() {
         return null;
     }
 
@@ -109,17 +178,18 @@ public class RobotDecisionFilter extends AbstractFilterTemplate {
      *
      * @return key: ip,value: qps
      */
-    @Override protected Map<String, Integer> countIp() {
+    protected RobotIpVO countIp() {
         return null;
     }
 
     /**
      * count the current IP qps
      *
-     * @param ip client ip
+     * @param ip       client ip
+     * @param ruleName name of the rule
      * @return qps
      */
-    @Override protected Integer getQpsByIp(String ip) {
+    protected Integer countCurrentPassByIp(String ip, String ruleName) {
         return null;
     }
 
@@ -127,9 +197,10 @@ public class RobotDecisionFilter extends AbstractFilterTemplate {
      * count the current client id qps
      *
      * @param clientId client id
+     * @param ruleName name of the rule
      * @return qps
      */
-    @Override protected Integer getQpsByClientId(String clientId) {
+    protected Integer countCurrentPassByClientId(String clientId, String ruleName) {
         return null;
     }
 }

@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.data.share.listener;
+package net.jlxxw.robot.filter.data.share.netty.listener;
 
 import net.jlxxw.robot.filter.common.event.NettySendDataEvent;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 4:23 PM
  */
 @Component
-public class ApplicationEventListener {
+public class ApplicationEventNettyListener {
 
     @Autowired
     private ApplicationContext applicationContext;

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * robot filter core properties
+ *
  * @author lcy
  */
 @RefreshScope
@@ -32,11 +33,6 @@ public class RobotFilterProperties {
     private FilterLogProperties log;
 
     /**
-     * response
-     */
-    private ResponseProperties response;
-
-    /**
      * in white list,no check
      * refresh 10s
      */
@@ -47,7 +43,16 @@ public class RobotFilterProperties {
      * refresh 10s
      */
     private Set<String> globalIpBlacklist = new HashSet<>();
-
+    /**
+     * referer list,not in list, cannot access system
+     * refresh 10s
+     */
+    private Set<String> refererWhitelist = new HashSet<>();
+    /**
+     * origin list,not in list, cannot access system
+     * refresh 10s
+     */
+    private Set<String> originWhitelist = new HashSet<>();
     /**
      * in white list, no check
      * refresh 10s
@@ -92,14 +97,6 @@ public class RobotFilterProperties {
 
     public void setLog(FilterLogProperties log) {
         this.log = log;
-    }
-
-    public ResponseProperties getResponse() {
-        return response;
-    }
-
-    public void setResponse(ResponseProperties response) {
-        this.response = response;
     }
 
     public Set<String> getGlobalIpWhitelist() {
@@ -148,5 +145,21 @@ public class RobotFilterProperties {
 
     public void setTrace(RobotTraceProperties trace) {
         this.trace = trace;
+    }
+
+    public Set<String> getRefererWhitelist() {
+        return refererWhitelist;
+    }
+
+    public void setRefererWhitelist(Set<String> refererWhitelist) {
+        this.refererWhitelist = refererWhitelist;
+    }
+
+    public Set<String> getOriginWhitelist() {
+        return originWhitelist;
+    }
+
+    public void setOriginWhitelist(Set<String> originWhitelist) {
+        this.originWhitelist = originWhitelist;
     }
 }

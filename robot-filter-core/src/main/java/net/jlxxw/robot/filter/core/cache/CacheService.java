@@ -36,4 +36,21 @@ public class CacheService {
             throw new RuntimeException(e);
         }
     }
+
+
+    public Set<String> getOriginWhitelist(){
+        try {
+            return  (Set<String>) CACHE.get("origin", () -> robotFilterProperties.getOriginWhitelist());
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Set<String> getRefererWhitelist(){
+        try {
+            return  (Set<String>) CACHE.get("referer", () -> robotFilterProperties.getOriginWhitelist());
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
