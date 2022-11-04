@@ -13,17 +13,23 @@ public class ReceiveRequestEvent extends ApplicationEvent {
     private final String host;
 
     private final String clientId;
+    /**
+     * filter name
+     */
+    private final String filterName;
+
 
     /**
      * @param ip       client ip
      * @param host     request host
      * @param clientId request client
      */
-    public ReceiveRequestEvent(String ip, String host, String clientId) {
+    public ReceiveRequestEvent(String ip, String host, String clientId,String filterName) {
         super(ip);
         this.ip = ip;
         this.host = host;
         this.clientId = clientId;
+        this.filterName = filterName;
     }
 
     public String getIp() {
@@ -37,4 +43,6 @@ public class ReceiveRequestEvent extends ApplicationEvent {
     public String getClientId() {
         return clientId;
     }
+
+
 }

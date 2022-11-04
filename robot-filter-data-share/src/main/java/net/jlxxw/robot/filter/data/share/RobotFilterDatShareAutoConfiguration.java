@@ -86,11 +86,12 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
      * @param args incoming application arguments
      * @throws Exception on error
      */
-    @Override public void run(ApplicationArguments args) throws Exception {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         robotFilterThreadpool.execute(()->{
             while (true) {
                 try {
-                    checkAndCreateClusterClient();
+                    checkAndCreateClusterNettyClient();
                 }catch (Exception e) {
                     logUtils.error(logger,"robot filter data share start failed!!! start retry",e);
                 }finally {
@@ -104,7 +105,7 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
         });
     }
 
-    private void checkAndCreateClusterClient() throws IOException {
+    private void checkAndCreateClusterNettyClient() throws IOException {
         Set<String> node = getAllNode();
         int port = robotFilterProperties.getDataShareProperties().getNetty().getServer().getPort();
         for (String serverIp : node) {

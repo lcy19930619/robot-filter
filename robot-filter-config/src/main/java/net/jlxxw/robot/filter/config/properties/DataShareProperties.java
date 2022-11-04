@@ -33,7 +33,13 @@ public class DataShareProperties {
     }
 
     enum Model{
+        /**
+         * default
+         */
         NETTY,
+        /**
+         * todo Not implemented
+         */
         REDIS
     }
 }

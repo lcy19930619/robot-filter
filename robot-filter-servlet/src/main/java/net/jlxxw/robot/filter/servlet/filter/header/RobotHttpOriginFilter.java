@@ -1,13 +1,14 @@
 package net.jlxxw.robot.filter.servlet.filter.header;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
@@ -24,7 +25,6 @@ public class RobotHttpOriginFilter extends AbstractFilterTemplate {
     @Autowired
     private HttpHeaderCheck headerCheck;
 
-
     /**
      * filter function
      *
@@ -37,53 +37,66 @@ public class RobotHttpOriginFilter extends AbstractFilterTemplate {
      */
     @Override
     protected void filter(ServletRequest request, ServletResponse response,
-        FilterChain chain) throws IOException, ServletException, RuleException {
+        FilterChain chain, FilterProperties filterProperties) throws IOException, ServletException, RuleException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String origin = httpServletRequest.getHeader("Origin");
-        Set<String> set = getFilterProperties().getRule().getWhitelist();
+        Set<String> set = filterProperties.getRule().getWhitelist();
         headerCheck.checkOrigin(origin, set);
         chain.doFilter(request, response);
     }
 
     /**
-     * Called by the web container to indicate to a filter that it is being
-     * placed into service. The servlet container calls the init method exactly
-     * once after instantiating the filter. The init method must complete
-     * successfully before the filter is asked to do any filtering work.
-     * <p>
-     * The web container cannot place the filter into service if the init method
-     * either:
-     * <ul>
-     * <li>Throws a ServletException</li>
-     * <li>Does not return within a time period defined by the web
-     *     container</li>
-     * </ul>
-     * The default implementation is a NO-OP.
+     * current filter increase the client id counter once
      *
-     * @param filterConfig The configuration information associated with the
-     *                     filter instance being initialised
-     * @throws ServletException if the initialisation fails
+     * @param clientId client id
      */
-    @Override public void init(FilterConfig filterConfig) throws ServletException {
-        super.init(filterConfig);
+    @Override protected void incClientId(String clientId) {
+
     }
 
     /**
-     * Called by the web container to indicate to a filter that it is being
-     * taken out of service. This method is only called once all threads within
-     * the filter's doFilter method have exited or after a timeout period has
-     * passed. After the web container calls this method, it will not call the
-     * doFilter method again on this instance of the filter. <br>
-     * <br>
-     * <p>
-     * This method gives the filter an opportunity to clean up any resources
-     * that are being held (for example, memory, file handles, threads) and make
-     * sure that any persistent state is synchronized with the filter's current
-     * state in memory.
-     * <p>
-     * The default implementation is a NO-OP.
+     * current filter increase the ip counter once
+     *
+     * @param ip client ip
      */
-    @Override public void destroy() {
-        super.destroy();
+    @Override protected void incIp(String ip) {
+
+    }
+
+    /**
+     * count current filter all client id
+     *
+     * @return key: client id,value: count
+     */
+    @Override protected Map<String, Integer> countClientId() {
+        return null;
+    }
+
+    /**
+     * count current filter all ip
+     *
+     * @return key: ip,value: count
+     */
+    @Override protected Map<String, Integer> countIp() {
+        return null;
+    }
+    /**
+     * count the current IP qps
+     *
+     * @param ip client ip
+     * @return qps
+     */
+    @Override protected Integer getQpsByIp(String ip) {
+        return null;
+    }
+
+    /**
+     * count the current client id qps
+     *
+     * @param clientId client id
+     * @return qps
+     */
+    @Override protected Integer getQpsByClientId(String clientId) {
+        return null;
     }
 }

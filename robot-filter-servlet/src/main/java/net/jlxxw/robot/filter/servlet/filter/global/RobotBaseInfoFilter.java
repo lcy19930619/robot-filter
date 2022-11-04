@@ -1,6 +1,7 @@
 package net.jlxxw.robot.filter.servlet.filter.global;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.common.log.LogUtils;
+import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.identity.ClientIdentification;
@@ -52,7 +54,7 @@ public class RobotBaseInfoFilter extends AbstractFilterTemplate {
      */
     @Override
     protected void filter(ServletRequest request, ServletResponse response,
-        FilterChain chain) throws IOException, ServletException, RuleException {
+        FilterChain chain, FilterProperties filterProperties) throws IOException, ServletException, RuleException {
 
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -94,8 +96,61 @@ public class RobotBaseInfoFilter extends AbstractFilterTemplate {
         }
     }
 
+    /**
+     * current filter increase the client id counter once
+     *
+     * @param clientId client id
+     */
+    @Override protected void incClientId(String clientId) {
 
+    }
 
+    /**
+     * current filter increase the ip counter once
+     *
+     * @param ip client ip
+     */
+    @Override protected void incIp(String ip) {
+
+    }
+
+    /**
+     * count current filter all client id
+     *
+     * @return key: client id,value: count
+     */
+    @Override protected Map<String, Integer> countClientId() {
+        return null;
+    }
+
+    /**
+     * count current filter all ip
+     *
+     * @return key: ip,value: count
+     */
+    @Override protected Map<String, Integer> countIp() {
+        return null;
+    }
+
+    /**
+     * count the current IP qps
+     *
+     * @param ip client ip
+     * @return qps
+     */
+    @Override protected Integer getQpsByIp(String ip) {
+        return null;
+    }
+
+    /**
+     * count the current client id qps
+     *
+     * @param clientId client id
+     * @return qps
+     */
+    @Override protected Integer getQpsByClientId(String clientId) {
+        return null;
+    }
 
     private String createClientId( HttpServletResponse response){
         try {
