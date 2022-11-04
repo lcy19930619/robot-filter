@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter;
+package net.jlxxw.robot.filter.servlet.filter.response;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -7,25 +7,22 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
-import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * handler RuleException
  * @author chunyang.leng
  * @date 2022-11-03 12:45 PM
  */
+@Component
 public class RobotResponseFilter extends AbstractFilterTemplate {
 
     @Autowired
     private RobotFilterProperties robotFilterProperties;
-
-    public RobotResponseFilter(FilterProperties filterProperties) {
-        super(filterProperties);
-    }
 
     /**
      * Called by the web container to indicate to a filter that it is being

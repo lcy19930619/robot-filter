@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter.global;
+package net.jlxxw.robot.filter.servlet.filter.header;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -6,26 +6,22 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.exception.RuleException;
+import net.jlxxw.robot.filter.core.identity.ClientIdentification;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
-import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
+ * client-id identifier
  * @author chunyang.leng
- * @date 2022-11-03 2:10 PM
+ * @date 2022-11-03 3:45 PM
  */
 @Component
-public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
+public class RobotIdentificationFilter extends AbstractFilterTemplate {
     @Autowired
-    private IpUtils ipUtils;
-    @Autowired
-    private CacheService cacheService;
-
+    private ClientIdentification clientIdentification;
 
     /**
      * filter function
@@ -40,12 +36,14 @@ public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
     @Override
     protected void filter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException, RuleException {
-        String clientIp = RobotServletFilterWebContext.getIp();
 
-        if (cacheService.getGlobalIpBlacklist().contains(clientIp)){
-            throw new RuleException("Global blacklist");
+        String clientId = RobotServletFilterWebContext.getClientId();
+        try {
+            clientIdentification.verifyClientId(clientId);
+        } catch (Exception e) {
+            throw new RuleException("Illegal user");
         }
-        chain.doFilter(request, response);
+
     }
 
     /**
@@ -67,7 +65,8 @@ public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
      *                     filter instance being initialised
      * @throws ServletException if the initialisation fails
      */
-    @Override public void init(FilterConfig filterConfig) throws ServletException {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
     }
 
@@ -86,7 +85,9 @@ public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
      * <p>
      * The default implementation is a NO-OP.
      */
-    @Override public void destroy() {
+    @Override
+    public void destroy() {
         super.destroy();
     }
+
 }

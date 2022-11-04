@@ -1,50 +1,21 @@
-package net.jlxxw.robot.filter.servlet.filter;
+package net.jlxxw.robot.filter.servlet.filter.decision;
 
 import java.io.IOException;
-import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import net.jlxxw.robot.filter.config.properties.FilterProperties;
-import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * referer check
+ * if request form robot,this filter decision reject
+ * todo ip qps limit, client id qps limit
  * @author chunyang.leng
- * @date 2022-11-03 2:10 PM
+ * @date 2022-11-04 11:32 AM
  */
-public class RobotHttpRefererFilter extends AbstractFilterTemplate {
-    @Autowired
-    private HttpHeaderCheck headerCheck;
-
-    public RobotHttpRefererFilter(FilterProperties filterProperties) {
-        super(filterProperties);
-    }
-
-    /**
-     * filter function
-     *
-     * @param request
-     * @param response
-     * @param chain
-     * @throws IOException
-     * @throws ServletException
-     * @throws RuleException    Robot limit triggered
-     */
-    @Override
-    protected void filter(ServletRequest request, ServletResponse response,
-        FilterChain chain) throws IOException, ServletException, RuleException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String referer = httpServletRequest.getHeader("Referer");
-        Set<String> set = getFilterProperties().getRule().getWhitelist();
-        headerCheck.checkReferer(referer,set);
-    }
+public class RobotDecisionFilter extends AbstractFilterTemplate {
 
     /**
      * Called by the web container to indicate to a filter that it is being
@@ -86,5 +57,20 @@ public class RobotHttpRefererFilter extends AbstractFilterTemplate {
      */
     @Override public void destroy() {
         super.destroy();
+    }
+
+    /**
+     * filter function
+     *
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     * @throws RuleException    Robot limit triggered
+     */
+    @Override protected void filter(ServletRequest request, ServletResponse response,
+        FilterChain chain) throws IOException, ServletException, RuleException {
+
     }
 }

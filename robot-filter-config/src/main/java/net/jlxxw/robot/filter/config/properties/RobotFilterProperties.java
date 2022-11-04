@@ -65,6 +65,11 @@ public class RobotFilterProperties {
      */
     private DataShareProperties dataShareProperties = new DataShareProperties();
 
+    /**
+     * trace properties
+     */
+    private RobotTraceProperties trace = new RobotTraceProperties();
+
     public DataShareProperties getDataShareProperties() {
         return dataShareProperties;
     }
@@ -135,5 +140,13 @@ public class RobotFilterProperties {
 
     public void setEncrypt(EncryptProperties encrypt) {
         this.encrypt = encrypt;
+    }
+
+    public RobotTraceProperties getTrace() {
+        return trace;
+    }
+
+    public void setTrace(RobotTraceProperties trace) {
+        this.trace = trace;
     }
 }

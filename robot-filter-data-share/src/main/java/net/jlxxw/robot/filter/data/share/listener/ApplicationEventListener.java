@@ -6,7 +6,6 @@ import net.jlxxw.robot.filter.data.share.netty.protocol.protobuf.RequestProtocol
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,6 +26,7 @@ public class ApplicationEventListener {
 
 
     public RequestProtocol convert(ReceiveRequestEvent event){
+        // todo convert
         return  RequestProtocol.newBuilder().build();
     }
 }

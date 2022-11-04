@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter.global;
+package net.jlxxw.robot.filter.servlet.filter.forward;
 
 import java.io.IOException;
 import javax.servlet.FilterChain;
@@ -6,48 +6,23 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import net.jlxxw.robot.filter.core.cache.CacheService;
+import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
-import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
+ * synchronized data to cluster other node
  * @author chunyang.leng
- * @date 2022-11-03 2:10 PM
+ * @date 2022-11-04 11:21 AM
  */
 @Component
-public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
+public class RobotRequestForwardFilter extends AbstractFilterTemplate {
     @Autowired
-    private IpUtils ipUtils;
-    @Autowired
-    private CacheService cacheService;
-
-
-    /**
-     * filter function
-     *
-     * @param request
-     * @param response
-     * @param chain
-     * @throws IOException
-     * @throws ServletException
-     * @throws RuleException    Robot limit triggered
-     */
-    @Override
-    protected void filter(ServletRequest request, ServletResponse response,
-        FilterChain chain) throws IOException, ServletException, RuleException {
-        String clientIp = RobotServletFilterWebContext.getIp();
-
-        if (cacheService.getGlobalIpBlacklist().contains(clientIp)){
-            throw new RuleException("Global blacklist");
-        }
-        chain.doFilter(request, response);
-    }
-
+    private ApplicationContext  applicationContext;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -88,5 +63,25 @@ public class RobotIpGlobalBlackListFilter extends AbstractFilterTemplate {
      */
     @Override public void destroy() {
         super.destroy();
+    }
+
+    /**
+     * filter function
+     *
+     * @param request
+     * @param response
+     * @param chain
+     * @throws IOException
+     * @throws ServletException
+     * @throws RuleException    Robot limit triggered
+     */
+    @Override protected void filter(ServletRequest request, ServletResponse response,
+        FilterChain chain) throws IOException, ServletException, RuleException {
+        String clientId = RobotServletFilterWebContext.getClientId();
+        String host = RobotServletFilterWebContext.getHost();
+        String ip = RobotServletFilterWebContext.getIp();
+        ReceiveRequestEvent event = new ReceiveRequestEvent(ip,host,clientId);
+        applicationContext.publishEvent(event);
+        chain.doFilter(request, response);
     }
 }

@@ -8,6 +8,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
+import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 
 /**
  * @author chunyang.leng
@@ -21,14 +22,16 @@ public abstract class AbstractFilterTemplate implements Filter {
     private FilterProperties filterProperties;
 
     public AbstractFilterTemplate(){}
-    public AbstractFilterTemplate(FilterProperties filterProperties) {
-        this.filterProperties = filterProperties;
-    }
 
     public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
         if (filterProperties.isEnable()) {
-            filter(request, response, chain);
+            boolean inWhiteList = RobotServletFilterWebContext.inWhiteList();
+            if (inWhiteList) {
+                chain.doFilter(request, response);
+            }else {
+                filter(request, response, chain);
+            }
         } else {
             chain.doFilter(request, response);
         }

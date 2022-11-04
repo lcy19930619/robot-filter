@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter;
+package net.jlxxw.robot.filter.servlet.filter.header;
 
 import java.io.IOException;
 import java.util.Set;
@@ -8,25 +8,22 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
- *
- * host check
+ * origin check
  * @author chunyang.leng
  * @date 2022-11-03 2:10 PM
  */
-public class RobotHttpHostFilter extends AbstractFilterTemplate {
+@Component
+public class RobotHttpOriginFilter extends AbstractFilterTemplate {
     @Autowired
     private HttpHeaderCheck headerCheck;
 
-    public RobotHttpHostFilter(FilterProperties filterProperties) {
-        super(filterProperties);
-    }
 
     /**
      * filter function
@@ -42,9 +39,10 @@ public class RobotHttpHostFilter extends AbstractFilterTemplate {
     protected void filter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException, RuleException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String referer = httpServletRequest.getHeader("Host");
+        String origin = httpServletRequest.getHeader("Origin");
         Set<String> set = getFilterProperties().getRule().getWhitelist();
-        headerCheck.checkReferer(referer,set);
+        headerCheck.checkOrigin(origin, set);
+        chain.doFilter(request, response);
     }
 
     /**
