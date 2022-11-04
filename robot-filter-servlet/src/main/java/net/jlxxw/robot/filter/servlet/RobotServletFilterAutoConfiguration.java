@@ -3,6 +3,7 @@ package net.jlxxw.robot.filter.servlet;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.ApplicationArguments;
@@ -84,10 +84,13 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                 filterRegistrationBean.setEnabled(filterProperties.isEnable());
                 String beanName = "robot.filter." + name;
 
-                Object bean;
+                AbstractFilterTemplate bean;
                 try {
-                    bean = defaultListableBeanFactory.getBean(clazz, className);
-                    filterRegistrationBean.setFilter((Filter)bean);
+                    bean = (AbstractFilterTemplate)defaultListableBeanFactory.getBean(clazz, className);
+                    if (Objects.isNull(bean.getFilterProperties())){
+                        bean.setFilterProperties(filterProperties);
+                    }
+                    filterRegistrationBean.setFilter(bean);
                 }catch (NoSuchBeanDefinitionException e){
                     // ignore not fount bean,do create Bean
                     GenericBeanDefinition definition = new GenericBeanDefinition();
@@ -95,13 +98,11 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                     definition.setBeanClassName(className);
                     definition.setScope(ConfigurableBeanFactory.SCOPE_SINGLETON);
                     definition.setBeanClass(clazz);
-                    ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
-                    constructorArgumentValues.addIndexedArgumentValue(0, filterProperties);
-                    definition.setConstructorArgumentValues(constructorArgumentValues);
+                    definition.setAttribute("filterProperties",filterProperties);
                     defaultListableBeanFactory.registerBeanDefinition(beanName, definition);
 
-                    bean = defaultListableBeanFactory.getBean(clazz, className);
-                    filterRegistrationBean.setFilter((Filter)bean);
+                    bean = (AbstractFilterTemplate)defaultListableBeanFactory.getBean(clazz, className);
+                    filterRegistrationBean.setFilter(bean);
                 }
                 defaultListableBeanFactory.registerSingleton(beanName + name ,bean);
                 logUtils.info(logger,"register servlet robot filter :{}",beanName);

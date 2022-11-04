@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ObjectUtils;
  * @author chunyang.leng
  * @date 2022-11-03 2:39 PM
  */
-public class WebContext {
+public class RobotServletFilterWebContext {
 
     private static final ThreadLocal<Boolean> IN_WHITE_LIST = new ThreadLocal<Boolean>();
 

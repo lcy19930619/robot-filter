@@ -12,7 +12,7 @@ import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import net.jlxxw.robot.filter.servlet.context.WebContext;
+import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class RobotIpGlobalWhiteListFilter extends AbstractFilterTemplate {
 
         Set<String> globalList = cacheService.getGlobalIpWhiteList();
         // set check context
-        WebContext.setInWhiteList(globalList.contains(clientIp));
+        RobotServletFilterWebContext.setInWhiteList(globalList.contains(clientIp));
     }
 
     /**

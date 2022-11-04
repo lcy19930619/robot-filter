@@ -14,13 +14,13 @@ import net.jlxxw.robot.filter.core.exception.RuleException;
  * @date 2022-11-03 9:41 AM
  */
 public abstract class AbstractFilterTemplate implements Filter {
-    private static final String enabledKey = "enabled";
 
     /**
      * filter properties
      */
-    private final FilterProperties filterProperties;
+    private FilterProperties filterProperties;
 
+    public AbstractFilterTemplate(){}
     public AbstractFilterTemplate(FilterProperties filterProperties) {
         this.filterProperties = filterProperties;
     }
@@ -32,6 +32,13 @@ public abstract class AbstractFilterTemplate implements Filter {
         } else {
             chain.doFilter(request, response);
         }
+    }
+    public FilterProperties getFilterProperties() {
+        return filterProperties;
+    }
+
+    public void setFilterProperties(FilterProperties filterProperties) {
+        this.filterProperties = filterProperties;
     }
 
     /**
@@ -47,8 +54,5 @@ public abstract class AbstractFilterTemplate implements Filter {
     protected abstract void filter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException, RuleException;
 
-    public FilterProperties getFilterProperties() {
-        return filterProperties;
-    }
 
 }
