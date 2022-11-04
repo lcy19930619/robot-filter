@@ -1,6 +1,7 @@
 package net.jlxxw.robot.filter.core.vo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * count by ip count
@@ -10,9 +11,11 @@ import java.util.List;
 public class RobotIpVO {
     private String filterName;
 
-    private String ruleName;
-
-    private List<IpCountVO> data;
+    /**
+     * key rule name
+     * value client info
+     */
+    private Map<String,List<IpCountVO>> data;
 
     public String getFilterName() {
         return filterName;
@@ -22,19 +25,11 @@ public class RobotIpVO {
         this.filterName = filterName;
     }
 
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public List<IpCountVO> getData() {
+    public Map<String, List<IpCountVO>> getData() {
         return data;
     }
 
-    public void setData(List<IpCountVO> data) {
+    public void setData(Map<String, List<IpCountVO>> data) {
         this.data = data;
     }
 }

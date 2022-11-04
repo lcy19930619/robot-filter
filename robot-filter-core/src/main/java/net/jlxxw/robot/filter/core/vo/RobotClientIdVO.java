@@ -1,6 +1,7 @@
 package net.jlxxw.robot.filter.core.vo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * count by client id
@@ -10,9 +11,11 @@ import java.util.List;
 public class RobotClientIdVO {
     private String filterName;
 
-    private String ruleName;
-
-    private List<ClientIdCountVO> data;
+    /**
+     * key rule name
+     * value client info
+     */
+    private Map<String,List<ClientIdCountVO>> data;
 
     public String getFilterName() {
         return filterName;
@@ -22,19 +25,11 @@ public class RobotClientIdVO {
         this.filterName = filterName;
     }
 
-    public String getRuleName() {
-        return ruleName;
-    }
-
-    public void setRuleName(String ruleName) {
-        this.ruleName = ruleName;
-    }
-
-    public List<ClientIdCountVO> getData() {
+    public Map<String, List<ClientIdCountVO>> getData() {
         return data;
     }
 
-    public void setData(List<ClientIdCountVO> data) {
+    public void setData(Map<String, List<ClientIdCountVO>> data) {
         this.data = data;
     }
 }

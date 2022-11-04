@@ -13,6 +13,10 @@ public class FilterProperties {
      */
     private String name;
     /**
+     * lru limit
+     */
+    private int lru = 200;
+    /**
      * enable filter
      */
     private boolean enable = true;
@@ -72,5 +76,13 @@ public class FilterProperties {
 
     public void setRules(List<RuleProperties> rules) {
         this.rules = rules;
+    }
+
+    public int getLru() {
+        return lru;
+    }
+
+    public void setLru(int lru) {
+        this.lru = lru;
     }
 }

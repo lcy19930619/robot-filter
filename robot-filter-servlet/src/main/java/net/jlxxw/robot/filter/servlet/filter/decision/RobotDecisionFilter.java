@@ -1,9 +1,13 @@
 package net.jlxxw.robot.filter.servlet.filter.decision;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Objects;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,6 +20,9 @@ import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.limit.SimpleCountUtils;
+import net.jlxxw.robot.filter.core.lru.LimitLru;
+import net.jlxxw.robot.filter.core.vo.ClientIdCountVO;
+import net.jlxxw.robot.filter.core.vo.IpCountVO;
 import net.jlxxw.robot.filter.core.vo.RobotClientIdVO;
 import net.jlxxw.robot.filter.core.vo.RobotIpVO;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
@@ -37,15 +44,30 @@ public class RobotDecisionFilter implements Filter {
     private FilterProperties filterProperties;
     @Autowired
     private ApplicationContext applicationContext;
+    /**
+     * key rule name
+     * value: key client id,value : count util
+     */
+    private Map<String, Map<String, SimpleCountUtils>> ruleClientIdLru = null;
 
     /**
-     * key is rule name
-     * value is SimpleCountUtils
+     * key rule name
+     * value: key client ip,value count util
      */
-    private Map<String, SimpleCountUtils> rulePass = new ConcurrentHashMap<>();
+    private Map<String, Map<String, SimpleCountUtils>> ruleIpLru = null;
+
+    /**
+     * limit
+     */
+    private int lru = 200;
 
     @PostConstruct
     private void init() {
+        lru = filterProperties.getLru();
+        ruleClientIdLru = new LimitLru<>(lru);
+        ruleIpLru = new LimitLru<>(lru);
+
+        Set<String> nameSet = new HashSet<>();
         List<RuleProperties> rules = filterProperties.getRules();
         if (CollectionUtils.isEmpty(rules)) {
             return;
@@ -54,10 +76,10 @@ public class RobotDecisionFilter implements Filter {
             if (StringUtils.isBlank(x.getName())) {
                 throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name is null !!!");
             }
-            if (rulePass.containsKey(x.getName())) {
+            if (nameSet.contains(x.getName())) {
                 throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name '" + x.getName() + "' is repeat !!!");
             }
-            rulePass.put(x.getName(), new SimpleCountUtils(x.getInterval()));
+            nameSet.add(x.getName());
         });
     }
 
@@ -123,8 +145,33 @@ public class RobotDecisionFilter implements Filter {
             if (!CollectionUtils.isEmpty(rules)) {
 
                 for (RuleProperties rule : rules) {
+
                     int maxAllow = rule.getMaxAllow();
                     String name = rule.getName();
+
+                    Map<String, SimpleCountUtils> ipLru = ruleIpLru.get(name);
+                    if (Objects.isNull(ipLru)) {
+                        ipLru = new LimitLru<>(lru);
+                        ruleIpLru.put(name, ipLru);
+                    }
+
+                    SimpleCountUtils ipSimpleCountUtils = ipLru.get(ip);
+                    if (Objects.isNull(ipSimpleCountUtils)) {
+                        ipSimpleCountUtils = new SimpleCountUtils(maxAllow);
+                        ipLru.put(ip, ipSimpleCountUtils);
+                    }
+
+                    Map<String, SimpleCountUtils> clientIdLru = ruleClientIdLru.get(name);
+                    if (Objects.isNull(clientIdLru)) {
+                        clientIdLru = new LimitLru<>(lru);
+                        ruleClientIdLru.put(name, clientIdLru);
+                    }
+
+                    SimpleCountUtils clientIdSimpleCountUtils = clientIdLru.get(ip);
+                    if (Objects.isNull(clientIdSimpleCountUtils)) {
+                        clientIdSimpleCountUtils = new SimpleCountUtils(maxAllow);
+                        ipLru.put(ip, clientIdSimpleCountUtils);
+                    }
 
                     int passByClientId = countCurrentPassByClientId(clientId, name);
                     int passByByIp = countCurrentPassByIp(ip, name);
@@ -150,7 +197,9 @@ public class RobotDecisionFilter implements Filter {
      * @param ruleName name of the rule
      */
     protected void incClientId(String clientId, String ruleName) {
-
+        Map<String, SimpleCountUtils> map = ruleClientIdLru.get(ruleName);
+        SimpleCountUtils simpleCountUtils = map.get(clientId);
+        simpleCountUtils.incrementAndGet();
     }
 
     /**
@@ -160,7 +209,9 @@ public class RobotDecisionFilter implements Filter {
      * @param ruleName rule name
      */
     protected void incIp(String ip, String ruleName) {
-
+        Map<String, SimpleCountUtils> map = ruleIpLru.get(ruleName);
+        SimpleCountUtils simpleCountUtils = map.get(ip);
+        simpleCountUtils.incrementAndGet();
     }
 
     /**
@@ -169,7 +220,27 @@ public class RobotDecisionFilter implements Filter {
      * @return key: client id,value: qps
      */
     protected RobotClientIdVO countClientId() {
-        return null;
+        Map<String,Map<String,SimpleCountUtils>> clone = ruleIpLru;
+        RobotClientIdVO vo = new RobotClientIdVO();
+        vo.setFilterName(filterProperties.getName());
+        Map<String,List<ClientIdCountVO>> map = new HashMap<>();
+        if (CollectionUtils.isEmpty(clone)){
+            vo.setData(map);
+            return vo;
+        }
+
+        clone.forEach((k,v)->{
+            List<ClientIdCountVO> list = new LinkedList<>();
+            v.forEach((k1,v1)->{
+                ClientIdCountVO data = new ClientIdCountVO();
+                data.setClientId(k1);
+                data.setCount(v1.currentPass());
+                list.add(data);
+            });
+            map.put(k,list);
+        });
+        vo.setData(map);
+        return vo;
     }
 
     /**
@@ -178,7 +249,28 @@ public class RobotDecisionFilter implements Filter {
      * @return key: ip,value: qps
      */
     protected RobotIpVO countIp() {
-        return null;
+        Map<String,Map<String,SimpleCountUtils>> clone = ruleClientIdLru;
+        RobotIpVO vo = new RobotIpVO();
+        vo.setFilterName(filterProperties.getName());
+        Map<String,List<IpCountVO>> map = new HashMap<String,List<IpCountVO>>();
+        if (CollectionUtils.isEmpty(clone)){
+            vo.setData(map);
+            return vo;
+        }
+
+        clone.forEach((k,v)->{
+            List<IpCountVO> list = new LinkedList<>();
+            v.forEach((k1,v1)->{
+                IpCountVO data = new IpCountVO();
+                data.setIp(k1);
+                data.setCount(v1.currentPass());
+                list.add(data);
+            });
+            map.put(k,list);
+        });
+        vo.setData(map);
+
+        return vo;
     }
 
     /**
@@ -189,7 +281,15 @@ public class RobotDecisionFilter implements Filter {
      * @return qps
      */
     protected int countCurrentPassByIp(String ip, String ruleName) {
-        return 0;
+        Map<String, SimpleCountUtils> map = ruleIpLru.get(ruleName);
+        if (CollectionUtils.isEmpty(map)) {
+            return 0;
+        }
+        SimpleCountUtils simpleCountUtils = map.get(ip);
+        if (Objects.isNull(simpleCountUtils)) {
+            return 0;
+        }
+        return simpleCountUtils.currentPass();
     }
 
     /**
@@ -200,7 +300,15 @@ public class RobotDecisionFilter implements Filter {
      * @return qps
      */
     protected int countCurrentPassByClientId(String clientId, String ruleName) {
-        return 0;
+        Map<String, SimpleCountUtils> map = ruleClientIdLru.get(ruleName);
+        if (CollectionUtils.isEmpty(map)) {
+            return 0;
+        }
+        SimpleCountUtils simpleCountUtils = map.get(clientId);
+        if (Objects.isNull(simpleCountUtils)) {
+            return 0;
+        }
+        return simpleCountUtils.currentPass();
     }
 
     public FilterProperties getFilterProperties() {

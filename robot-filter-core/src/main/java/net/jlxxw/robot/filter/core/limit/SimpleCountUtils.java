@@ -11,15 +11,15 @@ public class SimpleCountUtils {
      * time windows
      * unit:milliseconds
      */
-    public long interval;
+    private final long interval;
     /**
      * current time
      */
-    public long timeStamp = System.currentTimeMillis();
+    private long timeStamp = System.currentTimeMillis();
     /**
      * init pass is 0
      */
-    public AtomicInteger reqCount = new AtomicInteger(0);
+    private final AtomicInteger reqCount = new AtomicInteger(0);
 
     public SimpleCountUtils(long interval) {
         this.interval = interval;
