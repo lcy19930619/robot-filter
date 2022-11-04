@@ -106,7 +106,7 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
 
     private void checkAndCreateClusterClient() throws IOException {
         Set<String> node = getAllNode();
-        int port = robotFilterProperties.getDataShareProperties().getPort();
+        int port = robotFilterProperties.getDataShareProperties().getNetty().getServer().getPort();
         for (String serverIp : node) {
             String key = serverIp + ":" + port;
             String nettyClientBeanName = "nettyClient."+key;

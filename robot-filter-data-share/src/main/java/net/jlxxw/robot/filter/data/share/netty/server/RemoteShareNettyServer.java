@@ -8,12 +8,14 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author chunyang.leng
@@ -41,7 +43,7 @@ public class RemoteShareNettyServer {
                 b.group(bossGroup, workGroup)
                         .channel(NioServerSocketChannel.class)
                         //最大客户端连接数默认值为1024
-                        .option(ChannelOption.SO_BACKLOG, robotFilterProperties.getDataShareProperties().getServerMaxConnections())
+                        .option(ChannelOption.SO_BACKLOG, robotFilterProperties.getDataShareProperties().getNetty().getServer().getServerMaxConnections())
                         .childHandler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel sc) throws Exception {
@@ -51,7 +53,14 @@ public class RemoteShareNettyServer {
                             }
                         });
 
-                ChannelFuture f = b.bind(robotFilterProperties.getDataShareProperties().getPort()).sync();
+                Map<String, Object> option = robotFilterProperties.getDataShareProperties().getNetty().getServer().getNettyOption();
+                if (!CollectionUtils.isEmpty(option)){
+                    option.forEach((k,v)->{
+                        ChannelOption<Object> key = ChannelOption.valueOf(k);
+                        b.option(key,v);
+                    });
+                }
+                ChannelFuture f = b.bind(robotFilterProperties.getDataShareProperties().getNetty().getServer().getPort()).sync();
                 if (f.isSuccess()) {
                     logger.info("开启 netty 监听器");
                 }

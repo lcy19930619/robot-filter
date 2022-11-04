@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,6 +13,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.util.CollectionUtils;
 
 /**
  * netty client
@@ -62,8 +65,8 @@ public class NettyClient implements Closeable {
 
     @PostConstruct
     public void start() {
-        retryMaxCount = robotFilterProperties.getDataShareProperties().getRetryMaxCount();
-        retryDelay = robotFilterProperties.getDataShareProperties().getRetryDelay();
+        retryMaxCount = robotFilterProperties.getDataShareProperties().getNetty().getClient().getRetryMaxCount();
+        retryDelay = robotFilterProperties.getDataShareProperties().getNetty().getClient().getRetryDelay();
         group = new NioEventLoopGroup();
 
         Bootstrap bootstrap = new Bootstrap();
@@ -83,6 +86,13 @@ public class NettyClient implements Closeable {
                     pipeline.addLast(clientHandler);
                 }
             });
+        Map<String, Object> option = robotFilterProperties.getDataShareProperties().getNetty().getClient().getNettyOption();
+        if (!CollectionUtils.isEmpty(option)){
+            option.forEach((k,v)->{
+                ChannelOption<Object> key = ChannelOption.valueOf(k);
+                bootstrap.option(key,v);
+            });
+        }
         connect(bootstrap);
     }
 
