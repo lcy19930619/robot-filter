@@ -10,7 +10,7 @@ import javax.servlet.Servlet;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
-import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
+import net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,6 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
         filters.sort(Comparator.comparing(FilterProperties::getOrder));
 
         Set<String> nameSet = new HashSet<>();
-        Set<String> classNameSet = new HashSet<>();
         if (beanFactory instanceof DefaultListableBeanFactory){
             DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory)beanFactory;
 
@@ -64,29 +63,15 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                 }
                 nameSet.add(name);
 
-                String className = filterProperties.getClassName();
-                if (StringUtils.isBlank(className)){
-                    throw new BeanCreationException("className name is not null !!!");
-                }
-                if (nameSet.contains(className)){
-                    throw new BeanCreationException("className name repeat :" + name);
-                }
-                classNameSet.add(className);
-
                 Set<String> urlPattern = filterProperties.getUrlPattern();
-
-                Class<?> clazz = Class.forName(className);
-                if (!AbstractFilterTemplate.class.isAssignableFrom(clazz)){
-                     throw new BeanCreationException(className + " not is AbstractFilterTemplate sub class!!!");
-                }
                 FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
                 filterRegistrationBean.setUrlPatterns(urlPattern);
                 filterRegistrationBean.setEnabled(filterProperties.isEnable());
                 String beanName = "robot.filter." + name;
 
-                AbstractFilterTemplate bean;
+                RobotDecisionFilter bean;
                 try {
-                    bean = (AbstractFilterTemplate)defaultListableBeanFactory.getBean(clazz, className);
+                    bean = defaultListableBeanFactory.getBean(beanName,RobotDecisionFilter.class);
                     if (Objects.isNull(bean.getFilterProperties())){
                         bean.setFilterProperties(filterProperties);
                     }
@@ -95,13 +80,12 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                     // ignore not fount bean,do create Bean
                     GenericBeanDefinition definition = new GenericBeanDefinition();
                     definition.setAutowireCandidate(true);
-                    definition.setBeanClassName(className);
-                    definition.setScope(ConfigurableBeanFactory.SCOPE_SINGLETON);
-                    definition.setBeanClass(clazz);
+                    definition.setScope(ConfigurableBeanFactory.SCOPE_PROTOTYPE);
+                    definition.setBeanClass(RobotDecisionFilter.class);
                     definition.setAttribute("filterProperties",filterProperties);
                     defaultListableBeanFactory.registerBeanDefinition(beanName, definition);
 
-                    bean = (AbstractFilterTemplate)defaultListableBeanFactory.getBean(clazz, className);
+                    bean = defaultListableBeanFactory.getBean(beanName,RobotDecisionFilter.class);
                     filterRegistrationBean.setFilter(bean);
                 }
                 defaultListableBeanFactory.registerSingleton(beanName + name ,bean);

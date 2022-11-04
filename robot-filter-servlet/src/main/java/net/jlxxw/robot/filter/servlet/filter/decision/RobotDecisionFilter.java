@@ -203,4 +203,12 @@ public class RobotDecisionFilter implements Filter {
     protected Integer countCurrentPassByClientId(String clientId, String ruleName) {
         return null;
     }
+
+    public FilterProperties getFilterProperties() {
+        return filterProperties;
+    }
+
+    public void setFilterProperties(FilterProperties filterProperties) {
+        this.filterProperties = filterProperties;
+    }
 }

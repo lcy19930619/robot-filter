@@ -7,14 +7,10 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import net.jlxxw.robot.filter.config.properties.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RuleProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import net.jlxxw.robot.filter.core.vo.RobotClientIdVO;
-import net.jlxxw.robot.filter.core.vo.RobotIpVO;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
-import net.jlxxw.robot.filter.servlet.template.AbstractFilterTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +22,12 @@ import org.springframework.stereotype.Component;
 public class RobotIpGlobalBlackListFilter implements Filter {
     @Autowired
     private CacheService cacheService;
+    private final RuleProperties ruleProperties = new RuleProperties();
 
+    {
+        ruleProperties.setContentType("application/json");
+        ruleProperties.setHttpResponseCode(403);
+    }
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -105,7 +106,7 @@ public class RobotIpGlobalBlackListFilter implements Filter {
         String clientIp = RobotServletFilterWebContext.getIp();
 
         if (cacheService.getGlobalIpBlacklist().contains(clientIp)){
-            throw new RuleException("Global blacklist");
+            throw new RuleException("Global blacklist",ruleProperties);
         }
         chain.doFilter(request, response);
     }

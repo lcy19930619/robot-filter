@@ -23,11 +23,6 @@ public class FilterProperties {
     private Set<String> urlPattern;
 
     /**
-     * filter class name
-     */
-    private String className;
-
-    /**
      * sort by order，small priority
      */
     private int order;
@@ -62,13 +57,6 @@ public class FilterProperties {
         this.urlPattern = urlPattern;
     }
 
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
 
     public int getOrder() {
         return order;
