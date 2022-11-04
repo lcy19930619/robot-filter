@@ -5,8 +5,8 @@ package net.jlxxw.robot.filter.config.properties;
  * @date 2022-11-04 11:43 AM
  */
 public class NettyProperties {
-    private NettyClientProperties client;
-    private NettyServerProperties server;
+    private NettyClientProperties client = new NettyClientProperties();
+    private NettyServerProperties server = new NettyServerProperties();
 
     public NettyClientProperties getClient() {
         return client;

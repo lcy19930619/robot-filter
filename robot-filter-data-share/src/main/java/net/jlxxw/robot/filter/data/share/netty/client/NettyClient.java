@@ -11,20 +11,25 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import net.jlxxw.robot.filter.common.event.NettySendDataEvent;
 import net.jlxxw.robot.filter.common.log.LogUtils;
+import net.jlxxw.robot.filter.config.properties.NettyClientSSLProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.data.share.netty.protocol.protobuf.RequestProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.CollectionUtils;
 
@@ -63,11 +68,25 @@ public class NettyClient implements Closeable {
 
     private int retryDelay;
 
+    private SslContext sslContext;
     @PostConstruct
-    public void start() {
+    public void start()  {
         retryMaxCount = robotFilterProperties.getDataShareProperties().getNetty().getClient().getRetryMaxCount();
         retryDelay = robotFilterProperties.getDataShareProperties().getNetty().getClient().getRetryDelay();
+        NettyClientSSLProperties ssl = robotFilterProperties.getDataShareProperties().getNetty().getClient().getSsl();
+
         group = new NioEventLoopGroup();
+        if (ssl.isEnabled()){
+            try (InputStream certChainFile = new ClassPathResource(ssl.getClientCert()).getInputStream();
+                 InputStream keyFile = new ClassPathResource(ssl.getClientKey()).getInputStream();
+                 InputStream rootFile = new ClassPathResource(ssl.getCaCert()).getInputStream();
+            ){
+                sslContext = SslContextBuilder.forClient().keyManager(certChainFile, keyFile).trustManager(rootFile).build();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(group)
@@ -78,6 +97,11 @@ public class NettyClient implements Closeable {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
                     ChannelPipeline pipeline = ch.pipeline();
+                    if (ssl.isEnabled() && sslContext!=null){
+                        // add ssl
+                        pipeline.addFirst(sslContext.newHandler(ch.alloc()));
+                    }
+
                     //编码request
                     pipeline.addLast(new ClientEncoder());
                     //解码response

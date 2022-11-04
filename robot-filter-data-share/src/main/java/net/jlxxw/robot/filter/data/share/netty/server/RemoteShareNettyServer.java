@@ -8,12 +8,18 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import net.jlxxw.robot.filter.config.properties.NettyServerSSLProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -25,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 public class RemoteShareNettyServer {
 
     private static final Logger logger = LoggerFactory.getLogger(RemoteShareNettyServer.class);
+    private SslContext sslContext = null;
 
     @Autowired
     private RemoteShareChannelHandler remoteShareChannelHandler;
@@ -36,8 +43,20 @@ public class RemoteShareNettyServer {
     @PostConstruct
     private void startNettyServer() {
         Thread thread = new Thread(()->{
+
             EventLoopGroup bossGroup = new NioEventLoopGroup();
             EventLoopGroup workGroup = new NioEventLoopGroup();
+            NettyServerSSLProperties ssl = robotFilterProperties.getDataShareProperties().getNetty().getServer().getSsl();
+            if (ssl.isEnabled()){
+                try (InputStream certChainFile = new ClassPathResource(ssl.getServerCert()).getInputStream();
+                     InputStream keyFile = new ClassPathResource(ssl.getServerKey()).getInputStream();
+                     InputStream rootFile = new ClassPathResource(ssl.getCaCert()).getInputStream();
+                ){
+                    sslContext = SslContextBuilder.forServer(certChainFile, keyFile).trustManager(rootFile).build();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             try {
                 ServerBootstrap b = new ServerBootstrap();
                 b.group(bossGroup, workGroup)
@@ -47,6 +66,10 @@ public class RemoteShareNettyServer {
                         .childHandler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel sc) throws Exception {
+                                if (sslContext != null ){
+                                    // 添加SSL安装验证
+                                    sc.pipeline().addFirst(sslContext.newHandler(sc.alloc()));
+                                }
                                 sc.pipeline().addLast(new ServerDecoder());
                                 sc.pipeline().addLast(new ServerEncoder());
                                 sc.pipeline().addLast(remoteShareChannelHandler);

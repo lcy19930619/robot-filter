@@ -14,7 +14,7 @@ public class DataShareProperties {
      */
     private Model model = Model.NETTY;
 
-    private NettyProperties netty;
+    private NettyProperties netty = new NettyProperties();
 
     public NettyProperties getNetty() {
         return netty;

@@ -23,6 +23,11 @@ public class NettyServerProperties {
      */
     private Map<String,Object> nettyOption = new HashMap<String,Object>();
 
+    /**
+     * ssl properties
+     */
+    private NettyServerSSLProperties ssl = new NettyServerSSLProperties();
+
     public int getServerMaxConnections() {
         return serverMaxConnections;
     }
@@ -45,5 +50,13 @@ public class NettyServerProperties {
 
     public void setNettyOption(Map<String, Object> nettyOption) {
         this.nettyOption = nettyOption;
+    }
+
+    public NettyServerSSLProperties getSsl() {
+        return ssl;
+    }
+
+    public void setSsl(NettyServerSSLProperties ssl) {
+        this.ssl = ssl;
     }
 }

@@ -26,6 +26,11 @@ public class NettyClientProperties {
      */
     private Map<String,Object> nettyOption = new HashMap<String,Object>();
 
+    /**
+     * client ssl
+     */
+    private NettyClientSSLProperties ssl = new NettyClientSSLProperties();
+
     public Map<String, Object> getNettyOption() {
         return nettyOption;
     }
@@ -48,5 +53,13 @@ public class NettyClientProperties {
 
     public void setRetryDelay(int retryDelay) {
         this.retryDelay = retryDelay;
+    }
+
+    public NettyClientSSLProperties getSsl() {
+        return ssl;
+    }
+
+    public void setSsl(NettyClientSSLProperties ssl) {
+        this.ssl = ssl;
     }
 }
