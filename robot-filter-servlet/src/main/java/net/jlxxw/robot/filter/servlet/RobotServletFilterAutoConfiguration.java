@@ -70,8 +70,10 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                 String beanName = "robot.filter." + name;
 
                 RobotDecisionFilter bean;
+                String className = filterProperties.getClassName();
+                Class<?> clazz = Class.forName(className);
                 try {
-                    bean = defaultListableBeanFactory.getBean(beanName,RobotDecisionFilter.class);
+                    bean = (RobotDecisionFilter)defaultListableBeanFactory.getBean(beanName,clazz);
                     if (Objects.isNull(bean.getFilterProperties())){
                         bean.setFilterProperties(filterProperties);
                     }
@@ -81,7 +83,7 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                     GenericBeanDefinition definition = new GenericBeanDefinition();
                     definition.setAutowireCandidate(true);
                     definition.setScope(ConfigurableBeanFactory.SCOPE_PROTOTYPE);
-                    definition.setBeanClass(RobotDecisionFilter.class);
+                    definition.setBeanClass(clazz);
                     definition.setAttribute("filterProperties",filterProperties);
                     defaultListableBeanFactory.registerBeanDefinition(beanName, definition);
 

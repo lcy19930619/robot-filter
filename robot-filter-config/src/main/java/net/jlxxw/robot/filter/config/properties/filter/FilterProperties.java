@@ -32,6 +32,13 @@ public class FilterProperties {
     private int order;
 
     /**
+     * custom filter class, default is net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter
+     *
+     * <b>the class must is RobotDecisionFilter subclass</b>
+     */
+    private String className = "net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter";
+
+    /**
      * robot filter ruleProperties
      *
      */
@@ -84,5 +91,13 @@ public class FilterProperties {
 
     public void setLru(int lru) {
         this.lru = lru;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }
