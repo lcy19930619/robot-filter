@@ -72,6 +72,9 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                 RobotDecisionFilter bean;
                 String className = filterProperties.getClassName();
                 Class<?> clazz = Class.forName(className);
+                if (!RobotDecisionFilter.class.isAssignableFrom(clazz)){
+                    throw new BeanCreationException("Class " + className + " must is RobotDecisionFilter subclass" );
+                }
                 try {
                     bean = (RobotDecisionFilter)defaultListableBeanFactory.getBean(beanName,clazz);
                     if (Objects.isNull(bean.getFilterProperties())){

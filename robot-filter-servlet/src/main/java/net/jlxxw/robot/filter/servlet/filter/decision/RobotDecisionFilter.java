@@ -18,6 +18,7 @@ import javax.servlet.ServletResponse;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.limit.SimpleCountUtils;
 import net.jlxxw.robot.filter.core.lru.LimitLru;
@@ -39,7 +40,7 @@ import org.springframework.util.CollectionUtils;
  * @author chunyang.leng
  * @date 2022-11-04 11:32 AM
  */
-public class RobotDecisionFilter implements Filter {
+public class RobotDecisionFilter implements Filter, DataCore {
 
     private FilterProperties filterProperties;
     @Autowired
@@ -198,7 +199,8 @@ public class RobotDecisionFilter implements Filter {
      * @param clientId client id
      * @param ruleName name of the rule
      */
-    protected void incClientId(String clientId, String ruleName) {
+    @Override
+    public void incClientId(String clientId, String ruleName) {
         Map<String, SimpleCountUtils> map = ruleClientIdLru.get(ruleName);
         SimpleCountUtils simpleCountUtils = map.get(clientId);
         simpleCountUtils.incrementAndGet();
@@ -210,7 +212,8 @@ public class RobotDecisionFilter implements Filter {
      * @param ip       client ip
      * @param ruleName rule name
      */
-    protected void incIp(String ip, String ruleName) {
+    @Override
+    public void incIp(String ip, String ruleName) {
         Map<String, SimpleCountUtils> map = ruleIpLru.get(ruleName);
         SimpleCountUtils simpleCountUtils = map.get(ip);
         simpleCountUtils.incrementAndGet();
@@ -221,7 +224,8 @@ public class RobotDecisionFilter implements Filter {
      *
      * @return key: client id,value: qps
      */
-    protected RobotClientIdVO countClientId() {
+    @Override
+    public RobotClientIdVO countClientId() {
         Map<String,Map<String,SimpleCountUtils>> clone = ruleIpLru;
         RobotClientIdVO vo = new RobotClientIdVO();
         vo.setFilterName(filterProperties.getName());
@@ -250,7 +254,8 @@ public class RobotDecisionFilter implements Filter {
      *
      * @return key: ip,value: qps
      */
-    protected RobotIpVO countIp() {
+    @Override
+    public RobotIpVO countIp() {
         Map<String,Map<String,SimpleCountUtils>> clone = ruleClientIdLru;
         RobotIpVO vo = new RobotIpVO();
         vo.setFilterName(filterProperties.getName());
@@ -282,7 +287,8 @@ public class RobotDecisionFilter implements Filter {
      * @param ruleName name of the rule
      * @return qps
      */
-    protected int countCurrentPassByIp(String ip, String ruleName) {
+    @Override
+    public int countCurrentPassByIp(String ip, String ruleName) {
         Map<String, SimpleCountUtils> map = ruleIpLru.get(ruleName);
         if (CollectionUtils.isEmpty(map)) {
             return 0;
@@ -301,7 +307,8 @@ public class RobotDecisionFilter implements Filter {
      * @param ruleName name of the rule
      * @return qps
      */
-    protected int countCurrentPassByClientId(String clientId, String ruleName) {
+    @Override
+    public int countCurrentPassByClientId(String clientId, String ruleName) {
         Map<String, SimpleCountUtils> map = ruleClientIdLru.get(ruleName);
         if (CollectionUtils.isEmpty(map)) {
             return 0;
