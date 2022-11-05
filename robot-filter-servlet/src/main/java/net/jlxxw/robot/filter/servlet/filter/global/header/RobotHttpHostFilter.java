@@ -8,7 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import net.jlxxw.robot.filter.config.properties.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

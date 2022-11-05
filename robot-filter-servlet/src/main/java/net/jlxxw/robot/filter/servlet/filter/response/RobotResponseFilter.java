@@ -9,7 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
-import net.jlxxw.robot.filter.config.properties.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

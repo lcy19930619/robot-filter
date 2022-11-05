@@ -26,7 +26,7 @@ public class ClientHandler extends SimpleChannelInboundHandler<ResponseProtocol>
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ResponseProtocol response) throws Exception {
         try {
-
+                // todo
            // logger.debug("接受到server响应数据:{} ", JSON.toJSONString(response));
         }catch (Exception e){
             logger.error("客户端未知的异常",e);

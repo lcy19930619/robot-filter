@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.config.properties;
+package net.jlxxw.robot.filter.config.properties.log;
 
 import org.slf4j.event.Level;
 

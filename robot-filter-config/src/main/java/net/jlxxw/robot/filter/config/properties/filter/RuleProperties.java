@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.config.properties;
+package net.jlxxw.robot.filter.config.properties.filter;
 
 import java.util.HashSet;
 import java.util.Set;

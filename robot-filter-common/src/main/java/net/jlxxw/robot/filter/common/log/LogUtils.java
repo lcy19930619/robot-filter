@@ -2,7 +2,7 @@ package net.jlxxw.robot.filter.common.log;
 
 import java.util.Objects;
 import javax.annotation.PostConstruct;
-import net.jlxxw.robot.filter.config.properties.FilterLogProperties;
+import net.jlxxw.robot.filter.config.properties.log.FilterLogProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

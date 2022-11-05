@@ -1,7 +1,7 @@
 package net.jlxxw.robot.filter.core.check;
 
 import java.util.Set;
-import net.jlxxw.robot.filter.config.properties.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,6 @@
-package net.jlxxw.robot.filter.config.properties;
+package net.jlxxw.robot.filter.config.properties.data;
+
+import net.jlxxw.robot.filter.config.properties.data.netty.NettyProperties;
 
 /**
  * <b>no support refresh<b/>

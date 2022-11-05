@@ -1,6 +1,6 @@
 package net.jlxxw.robot.filter.core.exception;
 
-import net.jlxxw.robot.filter.config.properties.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 
 /**
  * @author chunyang.leng

@@ -9,7 +9,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-import net.jlxxw.robot.filter.config.properties.EncryptProperties;
+import net.jlxxw.robot.filter.config.properties.encrypt.EncryptProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;

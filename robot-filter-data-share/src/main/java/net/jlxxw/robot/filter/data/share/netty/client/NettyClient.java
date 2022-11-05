@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import net.jlxxw.robot.filter.common.event.NettySendDataEvent;
 import net.jlxxw.robot.filter.common.log.LogUtils;
-import net.jlxxw.robot.filter.config.properties.NettyClientSSLProperties;
+import net.jlxxw.robot.filter.config.properties.data.netty.NettyClientSSLProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.data.share.netty.protocol.protobuf.RequestProtocol;
 import org.slf4j.Logger;

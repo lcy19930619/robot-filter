@@ -7,7 +7,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import net.jlxxw.robot.filter.config.properties.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;

@@ -8,7 +8,7 @@ import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import net.jlxxw.robot.filter.common.log.LogUtils;
-import net.jlxxw.robot.filter.config.properties.FilterProperties;
+import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter;
 import org.apache.commons.lang3.StringUtils;

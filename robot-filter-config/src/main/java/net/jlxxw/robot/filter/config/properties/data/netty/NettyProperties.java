@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.config.properties;
+package net.jlxxw.robot.filter.config.properties.data.netty;
 
 /**
  * @author chunyang.leng

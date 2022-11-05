@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.config.properties;
+package net.jlxxw.robot.filter.config.properties.data.netty;
 
 import java.util.HashMap;
 import java.util.Map;

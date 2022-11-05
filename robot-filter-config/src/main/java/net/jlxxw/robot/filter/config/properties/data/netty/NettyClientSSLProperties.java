@@ -1,10 +1,10 @@
-package net.jlxxw.robot.filter.config.properties;
+package net.jlxxw.robot.filter.config.properties.data.netty;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-04 1:07 PM
  */
-public class NettyServerSSLProperties {
+public class NettyClientSSLProperties {
 
     /**
      * enable ssl
@@ -17,13 +17,13 @@ public class NettyServerSSLProperties {
     private String caCert;
 
     /**
-     * server-key.pem
+     * client-key.pem
      */
-    private String serverKey;
+    private String clientKey;
     /**
-     * server-cert.pem
+     * client-cert.pem
      */
-    private String serverCert;
+    private String clientCert;
 
     public boolean isEnabled() {
         return enabled;
@@ -41,20 +41,19 @@ public class NettyServerSSLProperties {
         this.caCert = caCert;
     }
 
-
-    public void setServerCert(String serverCert) {
-        this.serverCert = serverCert;
+    public String getClientKey() {
+        return clientKey;
     }
 
-    public String getServerKey() {
-        return serverKey;
+    public void setClientKey(String clientKey) {
+        this.clientKey = clientKey;
     }
 
-    public void setServerKey(String serverKey) {
-        this.serverKey = serverKey;
+    public String getClientCert() {
+        return clientCert;
     }
 
-    public String getServerCert() {
-        return serverCert;
+    public void setClientCert(String clientCert) {
+        this.clientCert = clientCert;
     }
 }
