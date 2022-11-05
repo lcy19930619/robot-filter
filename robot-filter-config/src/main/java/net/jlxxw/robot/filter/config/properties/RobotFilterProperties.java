@@ -10,6 +10,7 @@ import net.jlxxw.robot.filter.config.properties.encrypt.EncryptProperties;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.log.FilterLogProperties;
 import net.jlxxw.robot.filter.config.properties.trace.RobotTraceProperties;
+import net.jlxxw.robot.filter.config.properties.ui.UiProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +36,7 @@ public class RobotFilterProperties {
     /**
      * log properties
      */
-    private FilterLogProperties log;
+    private FilterLogProperties log = new FilterLogProperties();
 
     /**
      * in white list,no check
@@ -79,6 +80,11 @@ public class RobotFilterProperties {
      * trace properties
      */
     private RobotTraceProperties trace = new RobotTraceProperties();
+
+    /**
+     * ui properties
+     */
+    private UiProperties ui = new UiProperties();
 
     public DataShareProperties getDataShareProperties() {
         return dataShareProperties;
@@ -166,5 +172,13 @@ public class RobotFilterProperties {
 
     public void setOriginWhitelist(Set<String> originWhitelist) {
         this.originWhitelist = originWhitelist;
+    }
+
+    public UiProperties getUi() {
+        return ui;
+    }
+
+    public void setUi(UiProperties ui) {
+        this.ui = ui;
     }
 }

@@ -69,6 +69,8 @@
         <grpc.version>1.23.0</grpc.version>
         <protobuf-java.version>3.17.3</protobuf-java.version>
         <robot-filter.version>1.0.0.20221102</robot-filter.version>
+        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
+        <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
     </properties>
 
 
