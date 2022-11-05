@@ -9,7 +9,7 @@ import net.jlxxw.robot.filter.config.properties.data.DataShareProperties;
 import net.jlxxw.robot.filter.config.properties.encrypt.EncryptProperties;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.log.FilterLogProperties;
-import net.jlxxw.robot.filter.config.trace.RobotTraceProperties;
+import net.jlxxw.robot.filter.config.properties.trace.RobotTraceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.config.trace;
+package net.jlxxw.robot.filter.config.properties.trace;
 
 /**
  * @author chunyang.leng
