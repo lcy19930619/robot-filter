@@ -8,6 +8,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,6 +30,8 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-04 10:02 AM
  * @see RobotServletFilterWebContext
  */
+@Order(Integer.MIN_VALUE + 5)
+@WebFilter(filterName = "robot.http.base.info.filter",urlPatterns = "/")
 @Component
 public class RobotBaseInfoFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(RobotBaseInfoFilter.class);
@@ -158,7 +162,8 @@ public class RobotBaseInfoFilter implements Filter {
 
     private String createClientId( HttpServletResponse response){
         try {
-            String id = clientIdentification.createClientId();
+            String ip = RobotServletFilterWebContext.getIp();
+            String id = clientIdentification.createClientId(ip);
             Cookie cookie = new Cookie(robotFilterProperties.getTrace().getName(),id);
             cookie.setDomain(RobotServletFilterWebContext.getHost());
             cookie.setPath("/");

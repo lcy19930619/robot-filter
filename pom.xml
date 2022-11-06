@@ -71,6 +71,7 @@
         <robot-filter.version>1.0.0.20221102</robot-filter.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
+        <swagger-annotations.version>2.2.4</swagger-annotations.version>
     </properties>
 
 
@@ -202,6 +203,11 @@
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito-all.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

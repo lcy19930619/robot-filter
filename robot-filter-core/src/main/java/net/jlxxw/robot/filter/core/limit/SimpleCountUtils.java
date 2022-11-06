@@ -1,5 +1,7 @@
 package net.jlxxw.robot.filter.core.limit;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -7,6 +9,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @date 2022-03-10 11:15 AM
  */
 public class SimpleCountUtils {
+    /**
+     * ip or client id
+     */
+    private Set<String> infoSet = new HashSet<String>();
     /**
      * time windows
      * unit:milliseconds
@@ -44,11 +50,44 @@ public class SimpleCountUtils {
     }
 
     /**
+     * if info set not found info
+     * then
+     * inc and get count
+     *
+     * @param info info
+     * @return
+     */
+    public int incrementAndGet(String info) {
+        long now = System.currentTimeMillis();
+        if (now < timeStamp + interval) {
+            if (infoSet.contains(info)){
+                return reqCount.get();
+            }
+            // in current interval
+            return reqCount.incrementAndGet();
+        } else {
+            timeStamp = now;
+            // reset 1
+            reqCount.set(1);
+            infoSet.clear();
+            return 1;
+        }
+    }
+
+    /**
      * get current passed requests
      *
      * @return current passed requests
      */
     public int currentPass() {
         return reqCount.get();
+    }
+
+    /**
+     * count size
+     * @return
+     */
+    public int countInfoSize(){
+        return infoSet.size();
     }
 }

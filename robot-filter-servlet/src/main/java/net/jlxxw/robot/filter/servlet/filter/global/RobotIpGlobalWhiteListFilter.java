@@ -8,17 +8,21 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-03 2:10 PM
  */
+@Order(Integer.MIN_VALUE + 9)
+@WebFilter(filterName = "robot.http.global.whitelist.filter",urlPatterns = "/")
 @Component
 public class RobotIpGlobalWhiteListFilter implements Filter {
     @Autowired

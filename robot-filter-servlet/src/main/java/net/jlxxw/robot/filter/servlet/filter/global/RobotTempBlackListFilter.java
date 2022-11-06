@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter.global.header;
+package net.jlxxw.robot.filter.servlet.filter.global;
 
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -8,30 +8,17 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
-import net.jlxxw.robot.filter.core.exception.RuleException;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- *
- * host check
  * @author chunyang.leng
- * @date 2022-11-03 2:10 PM
+ * @date 2022-11-06 4:12 PM
  */
-@Order(Integer.MIN_VALUE + 1)
-@WebFilter(filterName = "robot.http.host.filter",urlPatterns = "/")
 @Component
-public class RobotHttpHostFilter implements Filter {
-
-    private final RuleProperties ruleProperties = new RuleProperties();
-    {
-        ruleProperties.setReturnRejectMessage(true);
-        ruleProperties.setContentType("text/html");
-        ruleProperties.setHttpResponseCode(400);
-    }
+@Order(Integer.MIN_VALUE + 7)
+@WebFilter(filterName = "robot.temp.blacklist.filter",urlPatterns = "/")
+public class RobotTempBlackListFilter implements Filter {
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -107,11 +94,5 @@ public class RobotHttpHostFilter implements Filter {
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String host = httpServletRequest.getHeader("Host");
-        if (StringUtils.isBlank(host)){
-            throw new RuleException(" host is required !!!",ruleProperties);
-        }
-        chain.doFilter(request, response);
     }
 }

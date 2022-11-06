@@ -32,6 +32,47 @@ public class RobotTraceProperties {
      */
     private int maxAge = 300 ;
 
+    /**
+     * enable trace limit
+     */
+    private boolean enableTraceLimit = true;
+
+    /**
+     * The number of different IP addresses allowed to pass with the same ID in ${maxAge} seconds
+     * @see RobotTraceProperties#maxAge
+     * for example
+     * <br/>
+     * ip proxy address
+     */
+    private int ipPass = 10 ;
+
+    /**
+     * The number of different ID addresses allowed to pass with the same ip in ${maxAge} seconds
+     * @see RobotTraceProperties#maxAge
+     * for example
+     * <br/>
+     *  A large number of users use the same public network outlet IP
+     */
+    private int idPass = 300;
+
+
+    /**
+     * allow to add blacklisted
+     */
+    private boolean allowAddBlacklisted = true;
+
+    /**
+     * time out remove blacklisted
+     * unit:second
+     */
+    private long blacklistedTime = 60;
+
+    /**
+     * allow remove
+     */
+    private boolean allowRemoveBlacklisted = true;
+
+
     public String getName() {
         return name;
     }
@@ -46,5 +87,53 @@ public class RobotTraceProperties {
 
     public void setMaxAge(int maxAge) {
         this.maxAge = maxAge;
+    }
+
+    public int getIpPass() {
+        return ipPass;
+    }
+
+    public void setIpPass(int ipPass) {
+        this.ipPass = ipPass;
+    }
+
+    public int getIdPass() {
+        return idPass;
+    }
+
+    public void setIdPass(int idPass) {
+        this.idPass = idPass;
+    }
+
+    public boolean isEnableTraceLimit() {
+        return enableTraceLimit;
+    }
+
+    public void setEnableTraceLimit(boolean enableTraceLimit) {
+        this.enableTraceLimit = enableTraceLimit;
+    }
+
+    public boolean isAllowAddBlacklisted() {
+        return allowAddBlacklisted;
+    }
+
+    public void setAllowAddBlacklisted(boolean allowAddBlacklisted) {
+        this.allowAddBlacklisted = allowAddBlacklisted;
+    }
+
+    public long getBlacklistedTime() {
+        return blacklistedTime;
+    }
+
+    public void setBlacklistedTime(long blacklistedTime) {
+        this.blacklistedTime = blacklistedTime;
+    }
+
+    public boolean isAllowRemoveBlacklisted() {
+        return allowRemoveBlacklisted;
+    }
+
+    public void setAllowRemoveBlacklisted(boolean allowRemoveBlacklisted) {
+        this.allowRemoveBlacklisted = allowRemoveBlacklisted;
     }
 }

@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter.global.header;
+package net.jlxxw.robot.filter.servlet.filter.global;
 
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -8,30 +8,27 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import org.apache.commons.lang3.StringUtils;
+import net.jlxxw.robot.filter.core.identity.ClientIdentification;
+import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
- *
- * host check
  * @author chunyang.leng
- * @date 2022-11-03 2:10 PM
+ * @date 2022-11-06 3:33 PM
  */
-@Order(Integer.MIN_VALUE + 1)
-@WebFilter(filterName = "robot.http.host.filter",urlPatterns = "/")
+@Order(Integer.MIN_VALUE + 10)
+@WebFilter(filterName = "robot.trace.filter",urlPatterns = "/")
 @Component
-public class RobotHttpHostFilter implements Filter {
-
-    private final RuleProperties ruleProperties = new RuleProperties();
-    {
-        ruleProperties.setReturnRejectMessage(true);
-        ruleProperties.setContentType("text/html");
-        ruleProperties.setHttpResponseCode(400);
-    }
+public class RobotTraceFilter implements Filter {
+    @Autowired
+    private RobotFilterProperties robotFilterProperties;
+    @Autowired
+    private ClientIdentification clientIdentification;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -106,12 +103,41 @@ public class RobotHttpHostFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
-
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String host = httpServletRequest.getHeader("Host");
-        if (StringUtils.isBlank(host)){
-            throw new RuleException(" host is required !!!",ruleProperties);
+        boolean enable = robotFilterProperties.getTrace().isEnableTraceLimit();
+        if (!enable){
+            chain.doFilter(request, response);
+            return;
         }
+        boolean whiteList = RobotServletFilterWebContext.inWhiteList();
+        if (whiteList){
+            chain.doFilter(request, response);
+            return;
+        }
+        String clientId = RobotServletFilterWebContext.getClientId();
+        String ip = RobotServletFilterWebContext.getIp();
+        int ipPass = robotFilterProperties.getTrace().getIpPass();
+        int idPass = robotFilterProperties.getTrace().getIdPass();
+
+        int countByClientId = clientIdentification.countByClientId(clientId);
+        int countByIp = clientIdentification.countByIp(ip);
+        traceCheck(countByClientId,idPass);
+        traceCheck(countByIp,ipPass);
+
+        // pass
         chain.doFilter(request, response);
+    }
+
+    private void traceCheck(int current, int max) {
+        if (current >= max) {
+            RuleProperties properties = new RuleProperties();
+            long blacklistedTime = robotFilterProperties.getTrace().getBlacklistedTime();
+            boolean allowAddBlacklisted = robotFilterProperties.getTrace().isAllowAddBlacklisted();
+            boolean allowRemoveBlacklisted = robotFilterProperties.getTrace().isAllowRemoveBlacklisted();
+            properties.setAllowAddBlacklisted(allowAddBlacklisted);
+            properties.setAllowRemoveBlacklisted(allowRemoveBlacklisted);
+            properties.setBlacklistedTime(blacklistedTime);
+
+            throw new RuleException("reject allowed", properties);
+        }
     }
 }

@@ -7,11 +7,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.identity.ClientIdentification;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Component;
  * @author chunyang.leng
  * @date 2022-11-03 3:45 PM
  */
+@Order(Integer.MIN_VALUE + 4)
+@WebFilter(filterName = "robot.http.identification.filter",urlPatterns = "/")
 @Component
 public class RobotIdentificationFilter implements Filter {
     @Autowired
@@ -105,8 +109,10 @@ public class RobotIdentificationFilter implements Filter {
         FilterChain chain) throws IOException, ServletException {
 
         String clientId = RobotServletFilterWebContext.getClientId();
+        String ip = RobotServletFilterWebContext.getIp();
         try {
-            clientIdentification.verifyClientId(clientId);
+            clientId = clientIdentification.verifyClientId(clientId, ip);
+            RobotServletFilterWebContext.setClientId(clientId);
         } catch (Exception e) {
             throw new RuleException("Illegal user",ruleProperties);
         }

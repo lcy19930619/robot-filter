@@ -8,10 +8,12 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Component;
  * @author chunyang.leng
  * @date 2022-11-03 2:10 PM
  */
+@Order(Integer.MIN_VALUE + 2)
+@WebFilter(filterName = "robot.http.origin.filter",urlPatterns = "/")
 @Component
 public class RobotHttpOriginFilter implements Filter {
     @Autowired

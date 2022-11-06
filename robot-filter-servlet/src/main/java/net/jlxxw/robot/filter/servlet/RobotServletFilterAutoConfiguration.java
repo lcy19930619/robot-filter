@@ -25,12 +25,16 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * servlet filter auto configuration
  */
+@ServletComponentScan(basePackages = {
+    "net.jlxxw.robot.filter.servlet.filter.global",
+    "net.jlxxw.robot.filter.servlet.filter.response"})
 @ConditionalOnClass(Servlet.class)
 @ComponentScan("net.jlxxw.robot.filter.servlet")
 @Configuration
@@ -52,7 +56,6 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
         Set<String> nameSet = new HashSet<>();
         if (beanFactory instanceof DefaultListableBeanFactory){
             DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory)beanFactory;
-
             for (FilterProperties filterProperties : filters) {
                 String name = filterProperties.getName();
                 if (StringUtils.isBlank(name)){
@@ -67,6 +70,7 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                 FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
                 filterRegistrationBean.setUrlPatterns(urlPattern);
                 filterRegistrationBean.setEnabled(filterProperties.isEnable());
+                filterRegistrationBean.setOrder(filterProperties.getOrder());
                 String beanName = "robot.filter." + name;
 
                 RobotDecisionFilter bean;
