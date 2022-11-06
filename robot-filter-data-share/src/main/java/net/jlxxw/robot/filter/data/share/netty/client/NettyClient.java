@@ -71,9 +71,9 @@ public class NettyClient implements Closeable {
     private SslContext sslContext;
     @PostConstruct
     public void start()  {
-        retryMaxCount = robotFilterProperties.getDataShareProperties().getNetty().getClient().getRetryMaxCount();
-        retryDelay = robotFilterProperties.getDataShareProperties().getNetty().getClient().getRetryDelay();
-        NettyClientSSLProperties ssl = robotFilterProperties.getDataShareProperties().getNetty().getClient().getSsl();
+        retryMaxCount = robotFilterProperties.getDataShare().getNetty().getClient().getRetryMaxCount();
+        retryDelay = robotFilterProperties.getDataShare().getNetty().getClient().getRetryDelay();
+        NettyClientSSLProperties ssl = robotFilterProperties.getDataShare().getNetty().getClient().getSsl();
 
         group = new NioEventLoopGroup();
         if (ssl.isEnabled()){
@@ -110,7 +110,7 @@ public class NettyClient implements Closeable {
                     pipeline.addLast(clientHandler);
                 }
             });
-        Map<String, Object> option = robotFilterProperties.getDataShareProperties().getNetty().getClient().getNettyOption();
+        Map<String, Object> option = robotFilterProperties.getDataShare().getNetty().getClient().getNettyOption();
         if (!CollectionUtils.isEmpty(option)){
             option.forEach((k,v)->{
                 ChannelOption<Object> key = ChannelOption.valueOf(k);

@@ -46,7 +46,7 @@ public class RemoteShareNettyServer {
 
             EventLoopGroup bossGroup = new NioEventLoopGroup();
             EventLoopGroup workGroup = new NioEventLoopGroup();
-            NettyServerSSLProperties ssl = robotFilterProperties.getDataShareProperties().getNetty().getServer().getSsl();
+            NettyServerSSLProperties ssl = robotFilterProperties.getDataShare().getNetty().getServer().getSsl();
             if (ssl.isEnabled()){
                 try (InputStream certChainFile = new ClassPathResource(ssl.getServerCert()).getInputStream();
                      InputStream keyFile = new ClassPathResource(ssl.getServerKey()).getInputStream();
@@ -62,7 +62,7 @@ public class RemoteShareNettyServer {
                 b.group(bossGroup, workGroup)
                         .channel(NioServerSocketChannel.class)
                         //最大客户端连接数默认值为1024
-                        .option(ChannelOption.SO_BACKLOG, robotFilterProperties.getDataShareProperties().getNetty().getServer().getServerMaxConnections())
+                        .option(ChannelOption.SO_BACKLOG, robotFilterProperties.getDataShare().getNetty().getServer().getServerMaxConnections())
                         .childHandler(new ChannelInitializer<SocketChannel>() {
                             @Override
                             protected void initChannel(SocketChannel sc) throws Exception {
@@ -76,14 +76,14 @@ public class RemoteShareNettyServer {
                             }
                         });
 
-                Map<String, Object> option = robotFilterProperties.getDataShareProperties().getNetty().getServer().getNettyOption();
+                Map<String, Object> option = robotFilterProperties.getDataShare().getNetty().getServer().getNettyOption();
                 if (!CollectionUtils.isEmpty(option)){
                     option.forEach((k,v)->{
                         ChannelOption<Object> key = ChannelOption.valueOf(k);
                         b.option(key,v);
                     });
                 }
-                ChannelFuture f = b.bind(robotFilterProperties.getDataShareProperties().getNetty().getServer().getPort()).sync();
+                ChannelFuture f = b.bind(robotFilterProperties.getDataShare().getNetty().getServer().getPort()).sync();
                 if (f.isSuccess()) {
                     logger.info("开启 netty 监听器");
                 }

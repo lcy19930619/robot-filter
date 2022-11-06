@@ -74,7 +74,7 @@ public class RobotFilterProperties {
     /**
      * data share properties
      */
-    private DataShareProperties dataShareProperties = new DataShareProperties();
+    private DataShareProperties dataShare = new DataShareProperties();
 
     /**
      * trace properties
@@ -86,12 +86,12 @@ public class RobotFilterProperties {
      */
     private UiProperties ui = new UiProperties();
 
-    public DataShareProperties getDataShareProperties() {
-        return dataShareProperties;
+    public DataShareProperties getDataShare() {
+        return dataShare;
     }
 
-    public void setDataShareProperties(DataShareProperties dataShareProperties) {
-        this.dataShareProperties = dataShareProperties;
+    public void setDataShare(DataShareProperties dataShare) {
+        this.dataShare = dataShare;
     }
 
     public List<FilterProperties> getFilters() {
