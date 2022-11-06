@@ -28,7 +28,7 @@ public class LimitLru<K, V> extends LinkedHashMap<K, V> {
      * @param initialCapacity capacity
      */
     public LimitLru(int limit,int initialCapacity) {
-        super(16, 0.75f, true);
+        super(initialCapacity, 0.75f, true);
         this.limit = limit;
     }
 

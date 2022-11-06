@@ -3,10 +3,11 @@ package net.jlxxw.robot.filter.core.identity;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import javax.annotation.PostConstruct;
 import net.jlxxw.robot.filter.common.encrypt.DesEncryption;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.limit.SimpleCountUtils;
-import net.jlxxw.robot.filter.core.lru.LimitLru;
+import net.jlxxw.robot.filter.core.lru.TimeOutLru;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,16 +25,23 @@ public class ClientIdentification {
      * key: ip
      * value: total client id set
      */
-    private static final Map<String, SimpleCountUtils> IP_COUNTERS = new LimitLru<>(2048,2048);
+    private static  Map<String, SimpleCountUtils> IP_COUNTERS = null;
 
     /**
      * key:  client id
      * value: total client ip
       */
-    private static final Map<String,SimpleCountUtils> CLIENT_ID_COUNTERS = new LimitLru<>(2048,2048);
+    private static  Map<String,SimpleCountUtils> CLIENT_ID_COUNTERS = null;
 
     @Autowired
     private DesEncryption desEncryption;
+
+    @PostConstruct
+    private void init(){
+        int age = robotFilterProperties.getTrace().getMaxAge();
+        IP_COUNTERS = new TimeOutLru<>(2048,age * 1000,2048);
+        CLIENT_ID_COUNTERS = new TimeOutLru<>(2048,age * 1000,2048);
+    }
 
     /**
      * create a new client id

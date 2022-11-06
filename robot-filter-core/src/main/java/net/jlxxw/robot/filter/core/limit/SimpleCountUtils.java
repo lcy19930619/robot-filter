@@ -3,12 +3,15 @@ package net.jlxxw.robot.filter.core.limit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.jlxxw.robot.filter.core.lru.Time;
 
 /**
  * @author chunyang.leng
  * @date 2022-03-10 11:15 AM
  */
-public class SimpleCountUtils {
+public class SimpleCountUtils implements Time {
+
+    private long createTime = System.currentTimeMillis();
     /**
      * ip or client id
      */
@@ -89,5 +92,15 @@ public class SimpleCountUtils {
      */
     public int countInfoSize(){
         return infoSet.size();
+    }
+
+    /**
+     * gai this creates time milliseconds
+     *
+     * @return
+     */
+    @Override
+    public long getCreateTime() {
+        return createTime;
     }
 }
