@@ -19,7 +19,7 @@ public class FilterProperties {
     /**
      * enable filter
      */
-    private boolean enable = true;
+    private boolean enabled = true;
 
     /**
      * url pattern,un support refresh
@@ -52,12 +52,12 @@ public class FilterProperties {
         this.name = name;
     }
 
-    public boolean isEnable() {
-        return enable;
+    public boolean isEnabled() {
+        return enabled;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Set<String> getUrlPattern() {

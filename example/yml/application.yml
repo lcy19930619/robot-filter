@@ -1,0 +1,74 @@
+robot:
+  filter:
+    share:
+      model: netty
+      netty:
+        server:
+          port: 31697
+          server-max-connections: 200
+          netty-option:
+            - name: xx
+              value: 0
+            - name: yy
+              value: 1
+          ssl:
+            enabled: false
+            ca-cert: /usr/local/ca.pem
+            server-key: /usr/local/server-key.pem
+            server-cert: /usr/local/server-cert.pem
+        client:
+          retry-cax-count: 10
+          retry-delay: 3000
+          netty-option:
+            - name: xx
+              value: 0
+            - name: yy
+              value: 1
+          ssl:
+            enabled: false
+            ca-cert: /usr/local/ca.pem
+            client-key: /usr/local/client-key.pem
+            client-cert: /usr/local/client-cert.pem
+    encrypt:
+      enabled: true
+      password: 2037160912343096965639708424590011416553193428956897480135656374257278867347454410695608942307532325452053895953189550149791562271893617579237042822813647557620
+    servlet:
+      filters:
+        - name: core-filter
+          enabled: true
+          lru: 200
+          url-pattern:
+            - /*
+          order: 10
+          rules:
+            - name: rule-1s
+              interval: 1000
+              max-allow: 200
+              allow-add-blacklisted: true
+              blacklisted-time: 60
+              allow-remove-blacklisted: true
+              return-reject-message: true
+              content-type: text/html
+              http-response-code: 403
+
+            - name: rule-1m
+              interval: 60000
+              max-allow: 13000
+              allow-add-blacklisted: true
+              blacklisted-time: 60
+              allow-remove-blacklisted: true
+              return-reject-message: true
+              content-type: text/html
+              http-response-code: 403
+    log:
+      enabled: true
+      level: info
+    trace:
+      allow-add-blacklisted: true
+      allow-remove-blacklisted: true
+      blacklisted-time: 60
+      enable-trace-limit: true
+      id-pass: 300
+      ip-pass: 10
+      max-age: 300
+      name: x-trace

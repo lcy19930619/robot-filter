@@ -69,7 +69,7 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                 Set<String> urlPattern = filterProperties.getUrlPattern();
                 FilterRegistrationBean<Filter> filterRegistrationBean = new FilterRegistrationBean<>();
                 filterRegistrationBean.setUrlPatterns(urlPattern);
-                filterRegistrationBean.setEnabled(filterProperties.isEnable());
+                filterRegistrationBean.setEnabled(filterProperties.isEnabled());
                 filterRegistrationBean.setOrder(filterProperties.getOrder());
                 String beanName = "robot.filter." + name;
 

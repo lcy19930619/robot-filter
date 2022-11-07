@@ -128,7 +128,7 @@ public class RobotDecisionFilter implements Filter, DataCore {
 
     public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
-        if (!filterProperties.isEnable()) {
+        if (!filterProperties.isEnabled()) {
             chain.doFilter(request, response);
             return;
         }

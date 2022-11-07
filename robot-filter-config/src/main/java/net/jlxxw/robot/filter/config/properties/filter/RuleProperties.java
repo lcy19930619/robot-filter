@@ -43,18 +43,6 @@ public class RuleProperties {
     private boolean allowRemoveBlacklisted = true;
 
     /**
-     * white list
-     * refresh 10s
-     */
-    private Set<String> whitelist = new HashSet<String>();
-
-    /**
-     * blacklisted
-     * refresh 10s
-     */
-    private Set<String> blacklisted = new HashSet<String>();
-
-    /**
      * reject response http code,default is 403
      */
     private int httpResponseCode = 403;
@@ -109,21 +97,6 @@ public class RuleProperties {
         this.allowRemoveBlacklisted = allowRemoveBlacklisted;
     }
 
-    public Set<String> getWhitelist() {
-        return whitelist;
-    }
-
-    public void setWhitelist(Set<String> whitelist) {
-        this.whitelist = whitelist;
-    }
-
-    public Set<String> getBlacklisted() {
-        return blacklisted;
-    }
-
-    public void setBlacklisted(Set<String> blacklisted) {
-        this.blacklisted = blacklisted;
-    }
 
     public int getHttpResponseCode() {
         return httpResponseCode;
