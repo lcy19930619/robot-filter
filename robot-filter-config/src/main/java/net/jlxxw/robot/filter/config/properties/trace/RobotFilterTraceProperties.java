@@ -1,12 +1,16 @@
 package net.jlxxw.robot.filter.config.properties.trace;
 
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-04 10:33 AM
  */
-public class RobotTraceProperties {
+@Configuration
+@ConfigurationProperties("robot.filter.trace")
+public class RobotFilterTraceProperties {
 
     /**
      * cookie name,default is "x-trace-client-id";
@@ -39,7 +43,7 @@ public class RobotTraceProperties {
 
     /**
      * The number of different IP addresses allowed to pass with the same ID in ${maxAge} seconds
-     * @see RobotTraceProperties#maxAge
+     * @see RobotFilterTraceProperties#maxAge
      * for example
      * <br/>
      * ip proxy address
@@ -48,7 +52,7 @@ public class RobotTraceProperties {
 
     /**
      * The number of different ID addresses allowed to pass with the same ip in ${maxAge} seconds
-     * @see RobotTraceProperties#maxAge
+     * @see RobotFilterTraceProperties#maxAge
      * for example
      * <br/>
      *  A large number of users use the same public network outlet IP

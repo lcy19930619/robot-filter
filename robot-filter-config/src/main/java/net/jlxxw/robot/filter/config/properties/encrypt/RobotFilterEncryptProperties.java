@@ -1,10 +1,15 @@
 package net.jlxxw.robot.filter.config.properties.encrypt;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
 /**
  * @author chunyang.leng
  * @date 2022-11-03 3:31 PM
  */
-public class EncryptProperties {
+@Configuration
+@ConfigurationProperties("robot.filter.encrypt")
+public class RobotFilterEncryptProperties {
 
     /**
      * enable encryption

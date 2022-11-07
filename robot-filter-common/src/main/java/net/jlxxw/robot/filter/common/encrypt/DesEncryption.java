@@ -9,8 +9,7 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-import net.jlxxw.robot.filter.config.properties.encrypt.EncryptProperties;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
+import net.jlxxw.robot.filter.config.properties.encrypt.RobotFilterEncryptProperties;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,13 +22,12 @@ import org.springframework.stereotype.Component;
 public class DesEncryption {
 
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private RobotFilterEncryptProperties robotFilterEncryptProperties;
 
     @PostConstruct
     private void init() {
-        EncryptProperties encrypt = robotFilterProperties.getEncrypt();
-        if (encrypt.isEnabled()){
-            // test encrypt
+        if (robotFilterEncryptProperties.isEnabled()){
+            // Self inspection and test encrypt
             String uuid = UUID.randomUUID().toString();
             try {
                 String encryptStr = encrypt(uuid);
@@ -51,11 +49,10 @@ public class DesEncryption {
      * @return 加密后的字符串
      */
     public String encrypt(String dataSource) throws Exception {
-        EncryptProperties encrypt = robotFilterProperties.getEncrypt();
-        if (!encrypt.isEnabled()){
+        if (!robotFilterEncryptProperties.isEnabled()){
             return dataSource;
         }
-        DESKeySpec desKey = new DESKeySpec(encrypt.getPassword().getBytes());
+        DESKeySpec desKey = new DESKeySpec(robotFilterEncryptProperties.getPassword().getBytes());
         //创建一个密匙工厂，获取secretKey
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
         SecretKey secretKey = keyFactory.generateSecret(desKey);
@@ -76,12 +73,11 @@ public class DesEncryption {
      * @return 解密后的字符串
      */
     public String decrypt(String src) throws Exception {
-        EncryptProperties encrypt = robotFilterProperties.getEncrypt();
-        if (!encrypt.isEnabled()){
+        if (!robotFilterEncryptProperties.isEnabled()){
             return src;
         }
         // 创建一个DESKeySpec对象，PASSWORD可任意指定
-        DESKeySpec desKey = new DESKeySpec(encrypt.getPassword().getBytes());
+        DESKeySpec desKey = new DESKeySpec(robotFilterEncryptProperties.getPassword().getBytes());
         // 创建一个密匙工厂
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");
         // 生成密钥

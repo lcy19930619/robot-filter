@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Order(Integer.MIN_VALUE + 7)
-@WebFilter(filterName = "robot.temp.blacklist.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.temp.blacklist.filter",urlPatterns = "/*")
 public class RobotTempBlackListFilter implements Filter {
     /**
      * Called by the web container to indicate to a filter that it is being

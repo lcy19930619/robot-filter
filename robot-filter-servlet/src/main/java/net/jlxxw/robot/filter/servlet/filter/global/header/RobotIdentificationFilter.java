@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 3:45 PM
  */
 @Order(Integer.MIN_VALUE + 4)
-@WebFilter(filterName = "robot.http.identification.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.http.identification.filter",urlPatterns = "/*")
 @Component
 public class RobotIdentificationFilter implements Filter {
     @Autowired

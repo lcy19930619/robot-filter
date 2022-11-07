@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
 import net.jlxxw.robot.filter.common.encrypt.DesEncryption;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
+import net.jlxxw.robot.filter.config.properties.trace.RobotFilterTraceProperties;
 import net.jlxxw.robot.filter.core.limit.SimpleCountUtils;
 import net.jlxxw.robot.filter.core.lru.TimeOutLru;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClientIdentification {
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private RobotFilterTraceProperties robotFilterTraceProperties;
     /**
      * key: ip
      * value: total client id set
@@ -38,7 +38,7 @@ public class ClientIdentification {
 
     @PostConstruct
     private void init(){
-        int age = robotFilterProperties.getTrace().getMaxAge();
+        int age = robotFilterTraceProperties.getMaxAge();
         IP_COUNTERS = new TimeOutLru<>(2048,age * 1000,2048);
         CLIENT_ID_COUNTERS = new TimeOutLru<>(2048,age * 1000,2048);
     }
@@ -52,7 +52,7 @@ public class ClientIdentification {
         String id = UUID.randomUUID().toString();
         SimpleCountUtils simpleCountUtils = IP_COUNTERS.get(ip);
         if (Objects.isNull(simpleCountUtils)) {
-            simpleCountUtils = new SimpleCountUtils(robotFilterProperties.getTrace().getMaxAge() * 1000L);
+            simpleCountUtils = new SimpleCountUtils(robotFilterTraceProperties.getMaxAge() * 1000L);
             IP_COUNTERS.put(ip, simpleCountUtils);
         }
         simpleCountUtils.incrementAndGet(id);
@@ -69,7 +69,7 @@ public class ClientIdentification {
         String decrypt = desEncryption.decrypt(clientId);
         SimpleCountUtils simpleCountUtils = CLIENT_ID_COUNTERS.get(clientId);
         if (Objects.isNull(simpleCountUtils)) {
-            simpleCountUtils = new SimpleCountUtils(robotFilterProperties.getTrace().getMaxAge() * 1000L);
+            simpleCountUtils = new SimpleCountUtils(robotFilterTraceProperties.getMaxAge() * 1000L);
             IP_COUNTERS.put(ip, simpleCountUtils);
         }
         simpleCountUtils.incrementAndGet(ip);

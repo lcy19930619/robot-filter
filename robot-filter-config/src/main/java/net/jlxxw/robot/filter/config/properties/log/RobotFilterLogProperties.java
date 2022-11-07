@@ -1,12 +1,16 @@
 package net.jlxxw.robot.filter.config.properties.log;
 
 import org.slf4j.event.Level;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-03 10:27 AM
  */
-public class FilterLogProperties {
+@Configuration
+@ConfigurationProperties("robot.filter.log")
+public class RobotFilterLogProperties {
 
     /**
      * enable filter log

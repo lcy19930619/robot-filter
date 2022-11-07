@@ -8,8 +8,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.trace.RobotFilterTraceProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.identity.ClientIdentification;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
@@ -22,11 +22,11 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-06 3:33 PM
  */
 @Order(Integer.MIN_VALUE + 10)
-@WebFilter(filterName = "robot.trace.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.trace.filter",urlPatterns = "/*")
 @Component
 public class RobotTraceFilter implements Filter {
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private RobotFilterTraceProperties robotFilterTraceProperties;
     @Autowired
     private ClientIdentification clientIdentification;
     /**
@@ -103,7 +103,7 @@ public class RobotTraceFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
-        boolean enable = robotFilterProperties.getTrace().isEnableTraceLimit();
+        boolean enable = robotFilterTraceProperties.isEnableTraceLimit();
         if (!enable){
             chain.doFilter(request, response);
             return;
@@ -115,8 +115,8 @@ public class RobotTraceFilter implements Filter {
         }
         String clientId = RobotServletFilterWebContext.getClientId();
         String ip = RobotServletFilterWebContext.getIp();
-        int ipPass = robotFilterProperties.getTrace().getIpPass();
-        int idPass = robotFilterProperties.getTrace().getIdPass();
+        int ipPass = robotFilterTraceProperties.getIpPass();
+        int idPass = robotFilterTraceProperties.getIdPass();
 
         int countByClientId = clientIdentification.countByClientId(clientId);
         int countByIp = clientIdentification.countByIp(ip);
@@ -130,9 +130,9 @@ public class RobotTraceFilter implements Filter {
     private void traceCheck(int current, int max) {
         if (current >= max) {
             RuleProperties properties = new RuleProperties();
-            long blacklistedTime = robotFilterProperties.getTrace().getBlacklistedTime();
-            boolean allowAddBlacklisted = robotFilterProperties.getTrace().isAllowAddBlacklisted();
-            boolean allowRemoveBlacklisted = robotFilterProperties.getTrace().isAllowRemoveBlacklisted();
+            long blacklistedTime = robotFilterTraceProperties.getBlacklistedTime();
+            boolean allowAddBlacklisted = robotFilterTraceProperties.isAllowAddBlacklisted();
+            boolean allowRemoveBlacklisted = robotFilterTraceProperties.isAllowRemoveBlacklisted();
             properties.setAllowAddBlacklisted(allowAddBlacklisted);
             properties.setAllowRemoveBlacklisted(allowRemoveBlacklisted);
             properties.setBlacklistedTime(blacklistedTime);

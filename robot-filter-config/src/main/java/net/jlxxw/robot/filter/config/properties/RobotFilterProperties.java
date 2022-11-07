@@ -2,15 +2,7 @@ package net.jlxxw.robot.filter.config.properties;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import net.jlxxw.robot.filter.config.properties.data.DataShareProperties;
-import net.jlxxw.robot.filter.config.properties.encrypt.EncryptProperties;
-import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
-import net.jlxxw.robot.filter.config.properties.log.FilterLogProperties;
-import net.jlxxw.robot.filter.config.properties.trace.RobotTraceProperties;
-import net.jlxxw.robot.filter.config.properties.ui.UiProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
@@ -22,21 +14,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @RefreshScope
 @Configuration
-@ConfigurationProperties("robot")
+@ConfigurationProperties("robot.filter")
 public class RobotFilterProperties {
-    /**
-     * enable inline filters
-     */
-    private boolean enabledInlineFilters = true;
-    /**
-     * filter chain properties
-     */
-    private List<FilterProperties> filters = new LinkedList<>();
-
-    /**
-     * log properties
-     */
-    private FilterLogProperties log = new FilterLogProperties();
 
     /**
      * in white list,no check
@@ -66,49 +45,6 @@ public class RobotFilterProperties {
      */
     private Set<String> globalAuthorizationWhitelist = new LinkedHashSet<>();
 
-    /**
-     * Encrypt Properties
-     */
-    private EncryptProperties encrypt = new EncryptProperties();
-
-    /**
-     * data share properties
-     */
-    private DataShareProperties dataShare = new DataShareProperties();
-
-    /**
-     * trace properties
-     */
-    private RobotTraceProperties trace = new RobotTraceProperties();
-
-    /**
-     * ui properties
-     */
-    private UiProperties ui = new UiProperties();
-
-    public DataShareProperties getDataShare() {
-        return dataShare;
-    }
-
-    public void setDataShare(DataShareProperties dataShare) {
-        this.dataShare = dataShare;
-    }
-
-    public List<FilterProperties> getFilters() {
-        return filters;
-    }
-
-    public void setFilters(List<FilterProperties> filters) {
-        this.filters = filters;
-    }
-
-    public FilterLogProperties getLog() {
-        return log;
-    }
-
-    public void setLog(FilterLogProperties log) {
-        this.log = log;
-    }
 
     public Set<String> getGlobalIpWhitelist() {
         return globalIpWhitelist;
@@ -134,30 +70,6 @@ public class RobotFilterProperties {
         this.globalAuthorizationWhitelist = globalAuthorizationWhitelist;
     }
 
-    public boolean isEnabledInlineFilters() {
-        return enabledInlineFilters;
-    }
-
-    public void setEnabledInlineFilters(boolean enabledInlineFilters) {
-        this.enabledInlineFilters = enabledInlineFilters;
-    }
-
-    public EncryptProperties getEncrypt() {
-        return encrypt;
-    }
-
-    public void setEncrypt(EncryptProperties encrypt) {
-        this.encrypt = encrypt;
-    }
-
-    public RobotTraceProperties getTrace() {
-        return trace;
-    }
-
-    public void setTrace(RobotTraceProperties trace) {
-        this.trace = trace;
-    }
-
     public Set<String> getRefererWhitelist() {
         return refererWhitelist;
     }
@@ -174,11 +86,4 @@ public class RobotFilterProperties {
         this.originWhitelist = originWhitelist;
     }
 
-    public UiProperties getUi() {
-        return ui;
-    }
-
-    public void setUi(UiProperties ui) {
-        this.ui = ui;
-    }
 }

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-04 10:41 AM
  */
 @Order(Integer.MIN_VALUE + 8)
-@WebFilter(filterName = "robot.http.authorization.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.http.authorization.filter",urlPatterns = "/*")
 @Component
 public class RobotGlobalAuthorizationWhiteFilter implements Filter {
     @Autowired

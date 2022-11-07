@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 2:10 PM
  */
 @Order(Integer.MIN_VALUE + 9)
-@WebFilter(filterName = "robot.http.global.whitelist.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.http.global.whitelist.filter",urlPatterns = "/*")
 @Component
 public class RobotIpGlobalWhiteListFilter implements Filter {
     @Autowired

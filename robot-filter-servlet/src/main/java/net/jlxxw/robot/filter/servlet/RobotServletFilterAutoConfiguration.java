@@ -9,7 +9,7 @@ import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
+import net.jlxxw.robot.filter.config.properties.filter.servlet.RobotFilterServletFilterProperties;
 import net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
 public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
     private static final Logger logger = LoggerFactory.getLogger(RobotServletFilterAutoConfiguration.class);
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private RobotFilterServletFilterProperties robotFilterServletFilterProperties;
     @Autowired
     private BeanFactory beanFactory;
     @Autowired
@@ -50,7 +50,7 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        List<FilterProperties> filters = robotFilterProperties.getFilters();
+        List<FilterProperties> filters = robotFilterServletFilterProperties.getFilters();
         filters.sort(Comparator.comparing(FilterProperties::getOrder));
 
         Set<String> nameSet = new HashSet<>();

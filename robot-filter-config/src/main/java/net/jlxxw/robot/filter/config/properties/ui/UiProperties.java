@@ -2,11 +2,15 @@ package net.jlxxw.robot.filter.config.properties.ui;
 
 import java.util.Collections;
 import java.util.List;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-05 10:57 PM
  */
+@Configuration
+@ConfigurationProperties("robot.filter.ui")
 public class UiProperties {
 
     private String loginName;

@@ -22,8 +22,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import net.jlxxw.robot.filter.common.event.NettySendDataEvent;
 import net.jlxxw.robot.filter.common.log.LogUtils;
+import net.jlxxw.robot.filter.config.properties.data.DataShareProperties;
 import net.jlxxw.robot.filter.config.properties.data.netty.NettyClientSSLProperties;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.data.share.netty.protocol.protobuf.RequestProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +56,7 @@ public class NettyClient implements Closeable {
     @Autowired
     private ClientHandler clientHandler;
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private DataShareProperties dataShareProperties;
     @Autowired
     private LogUtils logUtils;
 
@@ -71,9 +71,9 @@ public class NettyClient implements Closeable {
     private SslContext sslContext;
     @PostConstruct
     public void start()  {
-        retryMaxCount = robotFilterProperties.getDataShare().getNetty().getClient().getRetryMaxCount();
-        retryDelay = robotFilterProperties.getDataShare().getNetty().getClient().getRetryDelay();
-        NettyClientSSLProperties ssl = robotFilterProperties.getDataShare().getNetty().getClient().getSsl();
+        retryMaxCount = dataShareProperties.getNetty().getClient().getRetryMaxCount();
+        retryDelay = dataShareProperties.getNetty().getClient().getRetryDelay();
+        NettyClientSSLProperties ssl = dataShareProperties.getNetty().getClient().getSsl();
 
         group = new NioEventLoopGroup();
         if (ssl.isEnabled()){
@@ -110,7 +110,7 @@ public class NettyClient implements Closeable {
                     pipeline.addLast(clientHandler);
                 }
             });
-        Map<String, Object> option = robotFilterProperties.getDataShare().getNetty().getClient().getNettyOption();
+        Map<String, Object> option = dataShareProperties.getNetty().getClient().getNettyOption();
         if (!CollectionUtils.isEmpty(option)){
             option.forEach((k,v)->{
                 ChannelOption<Object> key = ChannelOption.valueOf(k);

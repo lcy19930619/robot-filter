@@ -1,12 +1,16 @@
 package net.jlxxw.robot.filter.config.properties.data;
 
 import net.jlxxw.robot.filter.config.properties.data.netty.NettyProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * <b>no support refresh<b/>
  * @author chunyang.leng
  * @date 2022-11-03 5:58 PM
  */
+@Configuration
+@ConfigurationProperties("robot.filter.share")
 public class DataShareProperties {
 
     /**

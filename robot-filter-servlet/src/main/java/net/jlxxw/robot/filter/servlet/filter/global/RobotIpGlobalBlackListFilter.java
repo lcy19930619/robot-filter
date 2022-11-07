@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 2:10 PM
  */
 @Order(Integer.MIN_VALUE + 6)
-@WebFilter(filterName = "robot.http.global.black.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.http.global.black.filter",urlPatterns = "/*")
 @Component
 public class RobotIpGlobalBlackListFilter implements Filter {
     @Autowired

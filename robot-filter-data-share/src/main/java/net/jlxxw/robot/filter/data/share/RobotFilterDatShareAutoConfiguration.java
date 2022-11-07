@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import net.jlxxw.robot.filter.common.log.LogUtils;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
+import net.jlxxw.robot.filter.config.properties.data.DataShareProperties;
 import net.jlxxw.robot.filter.data.share.component.DiscoveryClientAdapter;
 import net.jlxxw.robot.filter.data.share.netty.client.NettyClient;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
     @Autowired
     private DiscoveryClientAdapter discoveryClientAdapter;
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private DataShareProperties dataShareProperties;
     @Autowired
     private BeanFactory beanFactory;
     @Autowired
@@ -107,7 +107,7 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
 
     private void checkAndCreateClusterNettyClient() throws IOException {
         Set<String> node = getAllNode();
-        int port = robotFilterProperties.getDataShare().getNetty().getServer().getPort();
+        int port = dataShareProperties.getNetty().getServer().getPort();
         for (String serverIp : node) {
             String key = serverIp + ":" + port;
             String nettyClientBeanName = "nettyClient."+key;

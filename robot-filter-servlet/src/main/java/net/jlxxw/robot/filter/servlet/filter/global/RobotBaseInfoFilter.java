@@ -13,7 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.common.log.LogUtils;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
+import net.jlxxw.robot.filter.config.properties.trace.RobotFilterTraceProperties;
 import net.jlxxw.robot.filter.core.identity.ClientIdentification;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import net.jlxxw.robot.filter.servlet.utils.IpUtils;
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
  * @see RobotServletFilterWebContext
  */
 @Order(Integer.MIN_VALUE + 5)
-@WebFilter(filterName = "robot.http.base.info.filter",urlPatterns = "/")
+@WebFilter(filterName = "robot.http.base.info.filter",urlPatterns = "/*")
 @Component
 public class RobotBaseInfoFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(RobotBaseInfoFilter.class);
@@ -40,7 +40,7 @@ public class RobotBaseInfoFilter implements Filter {
     @Autowired
     private LogUtils logUtils;
     @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private RobotFilterTraceProperties robotFilterTraceProperties;
     @Autowired
     private ClientIdentification clientIdentification;
 
@@ -139,7 +139,7 @@ public class RobotBaseInfoFilter implements Filter {
                 return;
             }
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(robotFilterProperties.getTrace().getName())){
+                if (cookie.getName().equals(robotFilterTraceProperties.getName())){
                     RobotServletFilterWebContext.setClientId(cookie.getValue());
                     return;
                 }
@@ -164,10 +164,10 @@ public class RobotBaseInfoFilter implements Filter {
         try {
             String ip = RobotServletFilterWebContext.getIp();
             String id = clientIdentification.createClientId(ip);
-            Cookie cookie = new Cookie(robotFilterProperties.getTrace().getName(),id);
+            Cookie cookie = new Cookie(robotFilterTraceProperties.getName(),id);
             cookie.setDomain(RobotServletFilterWebContext.getHost());
             cookie.setPath("/");
-            cookie.setMaxAge(robotFilterProperties.getTrace().getMaxAge());
+            cookie.setMaxAge(robotFilterTraceProperties.getMaxAge());
             response.addCookie(cookie);
             return id;
         } catch (Exception e) {
