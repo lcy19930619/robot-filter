@@ -5,7 +5,13 @@ package net.jlxxw.robot.filter.config.properties.data.netty;
  * @date 2022-11-04 11:43 AM
  */
 public class NettyProperties {
+    /**
+     * netty client
+     */
     private NettyClientProperties client = new NettyClientProperties();
+    /**
+     * netty server
+     */
     private NettyServerProperties server = new NettyServerProperties();
 
     public NettyClientProperties getClient() {

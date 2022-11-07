@@ -20,6 +20,9 @@ public class DataShareProperties {
      */
     private Model model = Model.NETTY;
 
+    /**
+     * netty properties
+     */
     private NettyProperties netty = new NettyProperties();
 
     public NettyProperties getNetty() {
