@@ -113,7 +113,7 @@ public class RobotResponseFilter implements Filter {
             if (cause instanceof RuleException){
                 handles((RuleException) cause, response);
             }
-            System.out.println();
+            throw e;
         }
     }
 
