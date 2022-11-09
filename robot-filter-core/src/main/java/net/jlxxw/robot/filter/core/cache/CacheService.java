@@ -1,12 +1,5 @@
 package net.jlxxw.robot.filter.core.cache;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,42 +8,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CacheService {
-    private static final Cache CACHE = CacheBuilder.newBuilder().refreshAfterWrite(10, TimeUnit.SECONDS).build();
 
-    @Autowired
-    private RobotFilterProperties robotFilterProperties;
-
-    public Set<String> getGlobalIpBlacklist() {
-        try {
-            return  (Set<String>) CACHE.get("globalBlackList", () -> robotFilterProperties.getGlobalIpBlacklist());
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public Set<String> getGlobalIpWhiteList() {
-        try {
-            return  (Set<String>) CACHE.get("globalWhiteList", () -> robotFilterProperties.getGlobalIpWhitelist());
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    public Set<String> getOriginWhitelist(){
-        try {
-            return  (Set<String>) CACHE.get("origin", () -> robotFilterProperties.getOriginWhitelist());
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public Set<String> getRefererWhitelist(){
-        try {
-            return  (Set<String>) CACHE.get("referer", () -> robotFilterProperties.getOriginWhitelist());
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

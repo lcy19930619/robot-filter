@@ -8,7 +8,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-04 10:41 AM
  */
 @Order(Integer.MIN_VALUE + 8)
-@WebFilter(filterName = "robot.http.authorization.filter",urlPatterns = "/*")
 @Component
 public class RobotGlobalAuthorizationWhiteFilter implements Filter {
     @Autowired

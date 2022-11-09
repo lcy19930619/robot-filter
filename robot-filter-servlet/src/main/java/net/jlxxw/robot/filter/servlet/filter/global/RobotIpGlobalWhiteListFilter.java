@@ -22,13 +22,14 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 2:10 PM
  */
 @Order(Integer.MIN_VALUE + 9)
-@WebFilter(filterName = "robot.http.global.whitelist.filter",urlPatterns = "/*")
 @Component
 public class RobotIpGlobalWhiteListFilter implements Filter {
     @Autowired
     private IpCheck ipCheck;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private RobotFilterProperties robotFilterProperties;
 
     /**
      * Called by the web container to indicate to a filter that it is being
@@ -107,7 +108,7 @@ public class RobotIpGlobalWhiteListFilter implements Filter {
 
         String clientIp = RobotServletFilterWebContext.getIp();
 
-        Set<String> globalList = cacheService.getGlobalIpWhiteList();
+        Set<String> globalList = robotFilterProperties.getGlobalIpBlacklist();
 
         boolean checkResult = ipCheck.checkIpInSet(clientIp, globalList);
         // set check context

@@ -1,7 +1,5 @@
 package net.jlxxw.robot.filter.config.properties.ui;
 
-import java.util.Collections;
-import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,15 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("robot.filter.ui")
 public class UiProperties {
 
-    private String loginName;
+    private String loginName = "admin";
 
-    private String password;
-
-    /**
-     *
-     * ip range
-     */
-    private List<String> whiteIplist = Collections.singletonList("127.0.0.1");
+    private String password = "robot.filter.ui";
 
     public String getLoginName() {
         return loginName;
@@ -39,11 +31,4 @@ public class UiProperties {
         this.password = password;
     }
 
-    public List<String> getWhiteIplist() {
-        return whiteIplist;
-    }
-
-    public void setWhiteIplist(List<String> whiteIplist) {
-        this.whiteIplist = whiteIplist;
-    }
 }

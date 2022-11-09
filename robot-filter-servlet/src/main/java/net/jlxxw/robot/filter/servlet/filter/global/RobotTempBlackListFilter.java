@@ -1,6 +1,7 @@
 package net.jlxxw.robot.filter.servlet.filter.global;
 
 import java.io.IOException;
+import java.util.Objects;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -8,6 +9,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+import net.jlxxw.robot.filter.core.black.BlackList;
+import net.jlxxw.robot.filter.core.exception.RuleException;
+import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -17,8 +23,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Order(Integer.MIN_VALUE + 7)
-@WebFilter(filterName = "robot.temp.blacklist.filter",urlPatterns = "/*")
 public class RobotTempBlackListFilter implements Filter {
+    @Autowired
+    private BlackList blackList;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -94,7 +101,19 @@ public class RobotTempBlackListFilter implements Filter {
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
 
-        // todo
+        String clientId = RobotServletFilterWebContext.getClientId();
+        String ip = RobotServletFilterWebContext.getIp();
+
+        RuleProperties properties = blackList.inBlackList(ip);
+        if (Objects.nonNull(properties)){
+            throw new RuleException(" in black list",properties);
+        }
+
+        properties = blackList.inBlackList(clientId);
+        if (Objects.nonNull(properties)){
+            throw new RuleException(" in black list",properties);
+        }
+
         chain.doFilter(request, response);
     }
 }

@@ -10,8 +10,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,13 +24,14 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 2:10 PM
  */
 @Order(Integer.MIN_VALUE + 3)
-@WebFilter(filterName = "robot.http.referer.filter",urlPatterns = "/*")
 @Component
 public class RobotHttpRefererFilter implements Filter {
     @Autowired
     private HttpHeaderCheck headerCheck;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private RobotFilterProperties robotFilterProperties;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -106,8 +109,10 @@ public class RobotHttpRefererFilter implements Filter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String referer = httpServletRequest.getHeader("Referer");
-        Set<String> set = cacheService.getRefererWhitelist();
-        headerCheck.checkReferer(referer,set);
+        if (StringUtils.isNotBlank(referer)) {
+            Set<String> set = robotFilterProperties.getRefererWhitelist();
+            headerCheck.checkReferer(referer,set);
+        }
         chain.doFilter(request, response);
     }
 }

@@ -31,7 +31,7 @@ public class IpCheck {
             return true;
         }
         for (String ipAndRange : ipSet) {
-            if (inRange(ip,ipAndRange)){
+            if (ipAndRange.contains("/") && inRange(ip,ipAndRange)){
                 return true;
             }
         }

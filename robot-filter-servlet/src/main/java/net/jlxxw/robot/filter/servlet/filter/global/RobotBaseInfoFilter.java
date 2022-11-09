@@ -8,7 +8,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +29,7 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-04 10:02 AM
  * @see RobotServletFilterWebContext
  */
-@Order(Integer.MIN_VALUE + 5)
-@WebFilter(filterName = "robot.http.base.info.filter",urlPatterns = "/*")
+@Order(Integer.MIN_VALUE + 4)
 @Component
 public class RobotBaseInfoFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(RobotBaseInfoFilter.class);
@@ -127,7 +125,7 @@ public class RobotBaseInfoFilter implements Filter {
             String host = httpServletRequest.getHeader("Host");
             String authorization = httpServletRequest.getHeader("Authorization");
             RobotServletFilterWebContext.setIp(ipAddress);
-            RobotServletFilterWebContext.setHost(host);
+            RobotServletFilterWebContext.setHost(host.split(":")[0]);
             RobotServletFilterWebContext.setAuthorization(authorization);
             RobotServletFilterWebContext.setReferer(referer);
             RobotServletFilterWebContext.setOrigin(origin);

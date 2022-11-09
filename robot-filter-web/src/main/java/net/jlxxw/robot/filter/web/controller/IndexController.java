@@ -1,12 +1,26 @@
 package net.jlxxw.robot.filter.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import net.jlxxw.robot.filter.common.encrypt.DesEncryption;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.ui.UiProperties;
 import net.jlxxw.robot.filter.core.data.DataCore;
+import net.jlxxw.robot.filter.core.exception.RuleException;
+import net.jlxxw.robot.filter.core.vo.base.RequestResult;
+import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chunyang.leng
@@ -15,28 +29,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("ui")
 public class IndexController {
-
+    @Autowired
+    private UiProperties properties;
+    @Autowired
+    private DesEncryption desEncryption;
     /**
      * all data
      */
     @Autowired(required = false)
     private List<DataCore> dataCoreList;
 
+    @Operation(summary = "to index page")
     @GetMapping
-    public String index(){
+    public String index() {
         return "index";
     }
 
     /**
-     * todo check and ................
+     * login
+     *
      * @param loginName
      * @param password
      * @return
      */
-    @PostMapping("login")
-    public String login(String loginName, String password){
-        return "";
+    @Operation(summary = "web ui login method")
+    @ResponseBody
+    @PostMapping(value = "login", produces = "application/json")
+    public RequestResult<Boolean> login(@Parameter(description = "login name ") String loginName,
+        @Parameter(description = "password") String password,
+        @Parameter(hidden = true) HttpServletResponse response) throws Exception {
+        String name = properties.getLoginName();
+        String dbPassword = properties.getPassword();
+        RuleProperties properties = new RuleProperties();
+        properties.setReturnRejectMessage(true);
+        properties.setContentType("application/json");
+        properties.setHttpResponseCode(401);
+        if (!name.equals(loginName)) {
+            throw new RuleException("login failed", properties);
+        }
+        if (!securityEquals(dbPassword, password)) {
+            throw new RuleException("login failed", properties);
+        }
+
+        String format = LocalDateTime.now().plusMinutes(30).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String decrypt = desEncryption.encrypt(format);
+
+        String host = RobotServletFilterWebContext.getHost();
+        Cookie cookie = new Cookie("x-login", decrypt);
+        cookie.setMaxAge(30 * 60 * 60);
+        cookie.setDomain(host);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return RequestResult.success();
     }
 
+    private boolean securityEquals(String propertiesPassword, String password) {
+        int length = propertiesPassword.length();
+
+        boolean result = true;
+        for (int i = 0; i < length; i++) {
+            try {
+                char o = propertiesPassword.charAt(i);
+                char n = password.charAt(i);
+                result = result && Objects.equals(o, n);
+            } catch (IndexOutOfBoundsException e) {
+                //ignore
+                result = false;
+            }
+        }
+        return result && length == password.length();
+    }
 
 }

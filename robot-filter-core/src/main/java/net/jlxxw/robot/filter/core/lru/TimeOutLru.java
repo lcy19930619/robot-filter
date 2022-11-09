@@ -16,15 +16,15 @@ public class TimeOutLru<K, V extends Time> extends LinkedHashMap<K, V> {
     /**
      * expiry
      */
-    private final int expiryTime;
+    private final long expiryTime;
 
     /**
      * initialized
      *
-     * @param size       lru size
-     * @param expiryTime expiry Time ,unit: ms
+     * @param size       lru size, -1 no max size
+     * @param expiryTime expiry Time ,unit: ms, -1 no expiry
      */
-    public TimeOutLru(int size, int expiryTime, int initialCapacity) {
+    public TimeOutLru(int size, long expiryTime, int initialCapacity) {
         super(initialCapacity, 0.75f, true);
         this.expiryTime = expiryTime;
         this.size = size;
@@ -38,7 +38,7 @@ public class TimeOutLru<K, V extends Time> extends LinkedHashMap<K, V> {
         Time value = entry.getValue();
         long time = value.getCreateTime();
         long currentTimeMillis = System.currentTimeMillis();
-        return time + expiryTime > currentTimeMillis || size() > size;
+        return (expiryTime > 0 && time + expiryTime > currentTimeMillis) || (size > 0 && size() > size);
     }
 
 }

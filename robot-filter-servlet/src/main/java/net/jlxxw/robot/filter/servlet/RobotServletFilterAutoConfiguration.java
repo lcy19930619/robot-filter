@@ -19,22 +19,19 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.ConstructorArgumentValues;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
  * servlet filter auto configuration
  */
-@ServletComponentScan(basePackages = {
-    "net.jlxxw.robot.filter.servlet.filter.global",
-    "net.jlxxw.robot.filter.servlet.filter.response"})
 @ConditionalOnClass(Servlet.class)
 @ComponentScan("net.jlxxw.robot.filter.servlet")
 @Configuration
@@ -91,7 +88,9 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                     definition.setAutowireCandidate(true);
                     definition.setScope(ConfigurableBeanFactory.SCOPE_PROTOTYPE);
                     definition.setBeanClass(clazz);
-                    definition.setAttribute("filterProperties",filterProperties);
+                    ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
+                    constructorArgumentValues.addIndexedArgumentValue(0, filterProperties);
+                    definition.setConstructorArgumentValues(constructorArgumentValues);
                     defaultListableBeanFactory.registerBeanDefinition(beanName, definition);
 
                     bean = defaultListableBeanFactory.getBean(beanName,RobotDecisionFilter.class);

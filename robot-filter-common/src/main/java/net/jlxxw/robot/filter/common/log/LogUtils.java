@@ -36,7 +36,7 @@ public class LogUtils {
      */
     public void debug(Logger logger, String format, Object... args) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isDebugEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.DEBUG.toInt()) {
+            if (logger.isDebugEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.DEBUG.toInt()) {
                 logger.debug(format, args);
             }
         }
@@ -51,7 +51,7 @@ public class LogUtils {
      */
     public void info(Logger logger, String format, Object... args) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isInfoEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.INFO.toInt()) {
+            if (logger.isInfoEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.INFO.toInt()) {
                 logger.info(format, args);
             }
         }
@@ -65,7 +65,7 @@ public class LogUtils {
      */
     public void info(Logger logger, String format) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isInfoEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.INFO.toInt()) {
+            if (logger.isInfoEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.INFO.toInt()) {
                 logger.info(format);
             }
         }
@@ -80,7 +80,7 @@ public class LogUtils {
      */
     public void error(Logger logger, String message, Throwable throwable) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isErrorEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.ERROR.toInt()) {
+            if (logger.isErrorEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.ERROR.toInt()) {
                 logger.error(message, throwable);
             }
         }
@@ -95,7 +95,7 @@ public class LogUtils {
      */
     public void error(Logger logger, String message, Objects... args) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isErrorEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.ERROR.toInt()) {
+            if (logger.isErrorEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.ERROR.toInt()) {
                 logger.error(message, args);
             }
         }
@@ -110,7 +110,7 @@ public class LogUtils {
      */
     public void warn(Logger logger, String format, Object... args) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isWarnEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.WARN.toInt()) {
+            if (logger.isWarnEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.WARN.toInt()) {
                 logger.warn(format, args);
             }
         }
@@ -124,7 +124,7 @@ public class LogUtils {
      */
     public void warn(Logger logger, String format) {
         if (Objects.nonNull(logger) && robotFilterLogProperties.isEnabled()) {
-            if (logger.isWarnEnabled() && robotFilterLogProperties.getLevel().toInt() >= Level.WARN.toInt()) {
+            if (logger.isWarnEnabled() && robotFilterLogProperties.getLevel().toInt() <= Level.WARN.toInt()) {
                 logger.warn(format);
             }
         }

@@ -39,8 +39,8 @@ public class ClientIdentification {
     @PostConstruct
     private void init(){
         int age = robotFilterTraceProperties.getMaxAge();
-        IP_COUNTERS = new TimeOutLru<>(2048,age * 1000,2048);
-        CLIENT_ID_COUNTERS = new TimeOutLru<>(2048,age * 1000,2048);
+        IP_COUNTERS = new TimeOutLru<>(2048,age * 1000L,2048);
+        CLIENT_ID_COUNTERS = new TimeOutLru<>(2048,age * 1000L,2048);
     }
 
     /**

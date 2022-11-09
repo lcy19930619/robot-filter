@@ -15,6 +15,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import net.jlxxw.robot.filter.common.event.AddClientToBlackListEvent;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
@@ -56,6 +57,10 @@ public class RobotDecisionFilter implements Filter, DataCore {
      * value: key client ip,value count util
      */
     private Map<String, Map<String, SimpleCountUtils>> ruleIpLru = null;
+
+    public RobotDecisionFilter(FilterProperties filterProperties) {
+        this.filterProperties = filterProperties;
+    }
 
     /**
      * limit
@@ -176,9 +181,11 @@ public class RobotDecisionFilter implements Filter, DataCore {
                     int passByClientId = countCurrentPassByClientId(clientId, name);
                     int passByByIp = countCurrentPassByIp(ip, name);
                     if (passByClientId > maxAllow) {
+                        applicationContext.publishEvent(new AddClientToBlackListEvent(ip,clientId,filterProperties.getName(),rule));
                         throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
                     }
                     if (passByByIp > maxAllow) {
+                        applicationContext.publishEvent(new AddClientToBlackListEvent(ip,clientId,filterProperties.getName(),rule));
                         throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
                     }
                     incIp(ip, name);

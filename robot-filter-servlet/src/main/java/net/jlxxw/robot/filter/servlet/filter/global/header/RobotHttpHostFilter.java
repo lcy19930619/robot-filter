@@ -7,7 +7,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
@@ -22,7 +21,6 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 2:10 PM
  */
 @Order(Integer.MIN_VALUE + 1)
-@WebFilter(filterName = "robot.http.host.filter",urlPatterns = "/*")
 @Component
 public class RobotHttpHostFilter implements Filter {
 

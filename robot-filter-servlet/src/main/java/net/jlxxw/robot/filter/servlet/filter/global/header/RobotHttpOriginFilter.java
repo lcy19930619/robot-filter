@@ -8,10 +8,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,13 +23,14 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 2:10 PM
  */
 @Order(Integer.MIN_VALUE + 2)
-@WebFilter(filterName = "robot.http.origin.filter",urlPatterns = "/*")
 @Component
 public class RobotHttpOriginFilter implements Filter {
     @Autowired
     private HttpHeaderCheck headerCheck;
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private RobotFilterProperties robotFilterProperties;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -106,8 +108,10 @@ public class RobotHttpOriginFilter implements Filter {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String origin = httpServletRequest.getHeader("Origin");
-        Set<String> whitelist = cacheService.getOriginWhitelist();
-        headerCheck.checkOrigin(origin, whitelist);
+        if (StringUtils.isNotBlank(origin)) {
+            Set<String> whitelist =robotFilterProperties.getOriginWhitelist();
+            headerCheck.checkOrigin(origin, whitelist);
+        }
         chain.doFilter(request, response);
     }
 
