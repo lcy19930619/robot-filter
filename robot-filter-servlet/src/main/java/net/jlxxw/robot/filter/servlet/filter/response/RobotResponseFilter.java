@@ -7,7 +7,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
@@ -15,6 +14,7 @@ import net.jlxxw.robot.filter.core.exception.RuleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.NestedServletException;
 
 /**
  * handler RuleException
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-03 12:45 PM
  */
 @Order(Integer.MIN_VALUE)
-@WebFilter(filterName = "robot.response.filter",urlPatterns = "/*")
 @Component
 public class RobotResponseFilter implements Filter {
 
@@ -108,19 +107,28 @@ public class RobotResponseFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (RuleException e) {
-            RuleProperties properties = e.getRuleProperties();
-            boolean returnRejectMessage = properties.isReturnRejectMessage();
-            int httpCode = properties.getHttpResponseCode();
-
-            String contentType = properties.getContentType();
-
-            HttpServletResponse servletResponse = (HttpServletResponse) response;
-            servletResponse.setContentType(contentType);
-            servletResponse.setStatus(httpCode);
-            if (returnRejectMessage) {
-                servletResponse.getWriter().println(e.getMessage());
+           handles(e,response);
+        }catch (NestedServletException e){
+            Throwable cause = e.getCause();
+            if (cause instanceof RuleException){
+                handles((RuleException) cause, response);
             }
+            System.out.println();
+        }
+    }
 
+    private void handles(RuleException e,ServletResponse response) throws IOException {
+        RuleProperties properties = e.getRuleProperties();
+        boolean returnRejectMessage = properties.isReturnRejectMessage();
+        int httpCode = properties.getHttpResponseCode();
+
+        String contentType = properties.getContentType();
+
+        HttpServletResponse servletResponse = (HttpServletResponse) response;
+        servletResponse.setContentType(contentType);
+        servletResponse.setStatus(httpCode);
+        if (returnRejectMessage) {
+            servletResponse.getWriter().println(e.getMessage());
         }
     }
 }

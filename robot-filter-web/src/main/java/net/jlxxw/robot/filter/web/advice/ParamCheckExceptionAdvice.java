@@ -23,9 +23,4 @@ public class ParamCheckExceptionAdvice {
     }
 
 
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
-    public RequestResult<Object> exceptionHandler(Exception Exception){
-        return RequestResult.failure(ResultCode.SYSTEM_ERROR);
-    }
 }
