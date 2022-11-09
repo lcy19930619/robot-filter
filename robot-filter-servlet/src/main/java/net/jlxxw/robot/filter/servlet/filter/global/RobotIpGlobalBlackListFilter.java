@@ -10,6 +10,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
+import net.jlxxw.robot.filter.core.check.IpCheck;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ import org.springframework.stereotype.Component;
 public class RobotIpGlobalBlackListFilter implements Filter {
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private IpCheck ipCheck;
+
     private final RuleProperties ruleProperties = new RuleProperties();
 
     {
@@ -109,7 +113,7 @@ public class RobotIpGlobalBlackListFilter implements Filter {
 
         String clientIp = RobotServletFilterWebContext.getIp();
 
-        if (cacheService.getGlobalIpBlacklist().contains(clientIp)){
+        if (ipCheck.checkIpInSet(clientIp,cacheService.getGlobalIpBlacklist())){
             throw new RuleException("Global blacklist",ruleProperties);
         }
         chain.doFilter(request, response);

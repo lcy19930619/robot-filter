@@ -11,8 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.core.cache.CacheService;
+import net.jlxxw.robot.filter.core.check.IpCheck;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
-import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -26,9 +26,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RobotIpGlobalWhiteListFilter implements Filter {
     @Autowired
-    private IpUtils ipUtils;
-    @Autowired
-    private RobotFilterProperties robotFilterProperties;
+    private IpCheck ipCheck;
     @Autowired
     private CacheService cacheService;
 
@@ -110,8 +108,10 @@ public class RobotIpGlobalWhiteListFilter implements Filter {
         String clientIp = RobotServletFilterWebContext.getIp();
 
         Set<String> globalList = cacheService.getGlobalIpWhiteList();
+
+        boolean checkResult = ipCheck.checkIpInSet(clientIp, globalList);
         // set check context
-        RobotServletFilterWebContext.setInWhiteList(globalList.contains(clientIp));
+        RobotServletFilterWebContext.setInWhiteList(checkResult);
         chain.doFilter(request, response);
     }
 }

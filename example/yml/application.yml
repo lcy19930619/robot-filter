@@ -72,3 +72,9 @@ robot:
       ip-pass: 10
       max-age: 300
       name: x-trace
+    global-ip-whitelist:
+      - 127.0.0.1
+      - 192.168.0.1/24
+    global-ip-blacklist:
+      - 1.2.3.4
+      - 4.3.2.1/24
