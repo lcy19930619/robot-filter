@@ -1,9 +1,12 @@
 package net.jlxxw.robot.filter.config.properties.data.netty;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 /**
  * @author chunyang.leng
  * @date 2022-11-04 1:07 PM
  */
+@ConfigurationProperties("robot.filter.share.netty.client.ssl")
 public class NettyClientSSLProperties {
 
     /**

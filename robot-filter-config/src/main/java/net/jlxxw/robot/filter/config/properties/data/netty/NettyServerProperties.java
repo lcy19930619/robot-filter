@@ -2,11 +2,13 @@ package net.jlxxw.robot.filter.config.properties.data.netty;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-04 11:42 AM
  */
+@ConfigurationProperties("robot.filter.share.netty.server")
 public class NettyServerProperties {
     /**
      * server listener port,default is 31697
