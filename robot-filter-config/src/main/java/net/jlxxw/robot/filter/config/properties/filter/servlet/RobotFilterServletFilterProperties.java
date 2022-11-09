@@ -14,15 +14,15 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("robot.filter.servlet")
 public class RobotFilterServletFilterProperties {
     /**
-     * filter chain properties
+     * filter  properties
      */
-    private List<FilterProperties> filters = new LinkedList<>();
+    private FilterProperties filter = new FilterProperties();
 
-    public List<FilterProperties> getFilters() {
-        return filters;
+    public FilterProperties getFilter() {
+        return filter;
     }
 
-    public void setFilters(List<FilterProperties> filters) {
-        this.filters = filters;
+    public void setFilter(FilterProperties filter) {
+        this.filter = filter;
     }
 }

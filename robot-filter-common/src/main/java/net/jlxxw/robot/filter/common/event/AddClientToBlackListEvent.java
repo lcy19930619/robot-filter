@@ -12,20 +12,19 @@ public class AddClientToBlackListEvent extends ApplicationEvent {
 
     private String ip;
     private String clientId;
-    private String filterName;
     private RuleProperties ruleProperties;
 
-    public AddClientToBlackListEvent(String ip,String clientId,String filterName, RuleProperties ruleProperties){
+    public AddClientToBlackListEvent(String ip,String clientId, RuleProperties ruleProperties){
         super(clientId);
+        this.clientId = clientId;
+        this.ip = ip;
+        this.ruleProperties = ruleProperties;
     }
 
     public String getClientId() {
         return clientId;
     }
 
-    public String getFilterName() {
-        return filterName;
-    }
 
     public RuleProperties getRuleProperties() {
         return ruleProperties;

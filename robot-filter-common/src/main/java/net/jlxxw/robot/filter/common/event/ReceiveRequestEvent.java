@@ -13,10 +13,6 @@ public class ReceiveRequestEvent extends ApplicationEvent {
     private final String host;
 
     private final String clientId;
-    /**
-     * filter name
-     */
-    private final String filterName;
 
     /**
      * rule name
@@ -30,12 +26,11 @@ public class ReceiveRequestEvent extends ApplicationEvent {
      * @param clientId request client
      * @param ruleName
      */
-    public ReceiveRequestEvent(String ip, String host, String clientId,String filterName,String ruleName) {
+    public ReceiveRequestEvent(String ip, String host, String clientId,String ruleName) {
         super(ip);
         this.ip = ip;
         this.host = host;
         this.clientId = clientId;
-        this.filterName = filterName;
         this.ruleName = ruleName;
     }
 
@@ -49,10 +44,6 @@ public class ReceiveRequestEvent extends ApplicationEvent {
 
     public String getClientId() {
         return clientId;
-    }
-
-    public String getFilterName() {
-        return filterName;
     }
 
     public String getRuleName() {

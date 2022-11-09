@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
+
 import net.jlxxw.robot.filter.common.event.AddClientToBlackListEvent;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
@@ -39,34 +40,34 @@ public class BlackList {
 
     // todo spring cloud gateway support
 
+    private FilterProperties filterProperties;
+
     @PostConstruct
     private void init() {
-        List<FilterProperties> filters = servletFilterProperties.getFilters();
-        for (FilterProperties properties : filters) {
-            List<RuleProperties> rules = properties.getRules();
-            for (RuleProperties rule : rules) {
-                String name = rule.getName();
-                if (ipBlackLru.containsKey(name)) {
-                    throw new BeanCreationException(" rule name " + name + " already exists !!!");
-                }
-                if (clientIdLru.containsKey(name)) {
-                    throw new BeanCreationException(" rule name " + name + " already exists !!!");
-                }
-                long expiryTime = -1;
-                boolean blacklisted = rule.isAllowRemoveBlacklisted();
-                if (blacklisted) {
-                    expiryTime = rule.getBlacklistedTime();
-                }
-
-                // no max
-                TimeOutLru<String, ClientInfo> ipBlackLru = new TimeOutLru<>(-1, expiryTime, 16);
-                this.ipBlackLru.put(name, ipBlackLru);
-                // no max
-                TimeOutLru<String, ClientInfo> clientIdBlackLru = new TimeOutLru<>(-1, expiryTime, 16);
-                this.clientIdLru.put(name, clientIdBlackLru);
+        filterProperties = servletFilterProperties.getFilter();
+        List<RuleProperties> rules = filterProperties.getRules();
+        for (RuleProperties rule : rules) {
+            String name = rule.getName();
+            if (ipBlackLru.containsKey(name)) {
+                throw new BeanCreationException(" rule name " + name + " already exists !!!");
+            }
+            if (clientIdLru.containsKey(name)) {
+                throw new BeanCreationException(" rule name " + name + " already exists !!!");
+            }
+            long expiryTime = -1;
+            boolean blacklisted = rule.isAllowRemoveBlacklisted();
+            if (blacklisted) {
+                expiryTime = rule.getBlacklistedTime();
             }
 
+            // no max
+            TimeOutLru<String, ClientInfo> ipBlackLru = new TimeOutLru<>(-1, expiryTime, 16);
+            this.ipBlackLru.put(name, ipBlackLru);
+            // no max
+            TimeOutLru<String, ClientInfo> clientIdBlackLru = new TimeOutLru<>(-1, expiryTime, 16);
+            this.clientIdLru.put(name, clientIdBlackLru);
         }
+
     }
 
     @EventListener(AddClientToBlackListEvent.class)
