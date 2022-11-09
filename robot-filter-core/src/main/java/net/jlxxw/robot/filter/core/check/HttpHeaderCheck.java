@@ -36,7 +36,7 @@ public class HttpHeaderCheck {
             throw new RuleException("unsafe referer:" + referer, ruleProperties);
         }
         for (String white : whitelist) {
-            if (white.contains(referer)) {
+            if (referer.contains(white)) {
                 return;
             }
         }
@@ -58,7 +58,7 @@ public class HttpHeaderCheck {
             throw new RuleException("unsafe origin:" + origin, ruleProperties);
         }
         for (String white : whitelist) {
-            if (white.contains(origin)) {
+            if (origin.contains(white)) {
                 return;
             }
         }
