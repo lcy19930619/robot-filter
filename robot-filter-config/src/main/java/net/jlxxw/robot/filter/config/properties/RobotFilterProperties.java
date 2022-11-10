@@ -19,28 +19,24 @@ public class RobotFilterProperties {
 
     /**
      * in white list,no check
-     * refresh 10s
      */
     private Set<String> globalIpWhitelist = new HashSet<>();
 
     /**
      * in black list, cannot access system
-     * refresh 10s
      */
     private Set<String> globalIpBlacklist = new HashSet<>();
     /**
      * referer list,not in list, cannot access system
-     * refresh 10s
      */
     private Set<String> refererWhitelist = new HashSet<>();
     /**
      * origin list,not in list, cannot access system
-     * refresh 10s
      */
     private Set<String> originWhitelist = new HashSet<>();
     /**
      * in white list, no check
-     * refresh 10s
+     *
      * get Authorization form http header "Authorization"
      */
     private Set<String> globalAuthorizationWhitelist = new LinkedHashSet<>();
