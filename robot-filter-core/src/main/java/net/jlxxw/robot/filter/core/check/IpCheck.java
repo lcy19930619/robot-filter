@@ -21,6 +21,12 @@ public class IpCheck {
      * @return true if in set collection, false otherwise
      */
     public boolean checkIpInSet(String ip, Set<String> ipSet){
+        if (CollectionUtils.isEmpty(ipSet)){
+            return true;
+        }
+        if (ipSet.contains("0.0.0.0")){
+            return true;
+        }
         if (StringUtils.isBlank(ip)){
             return false;
         }
