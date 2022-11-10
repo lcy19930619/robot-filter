@@ -8,5 +8,5 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CacheService {
-
+    public static final long SYSTEM_START_TIME = System.currentTimeMillis();
 }

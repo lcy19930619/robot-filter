@@ -53,6 +53,8 @@ public class RobotGlobalAuthorizationWhiteFilter implements Filter {
      */
     @Override public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
+        logUtils.info(logger,"filter:RobotGlobalAuthorizationWhiteFilter initialized");
+
     }
 
     /**

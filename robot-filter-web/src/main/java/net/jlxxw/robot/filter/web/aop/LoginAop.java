@@ -27,13 +27,12 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class LoginAop {
     @Autowired
     private DesEncryption desEncryption;
-    @Pointcut("execution(public * net.jlxxw.robot.filter.web.controller.*.*.*(..))")
-    public void pointcut() {
 
-    }
+    @Pointcut("@annotation(net.jlxxw.robot.filter.web.aop.LoginCheck)")
+    public void pointcut() {}
 
     @Before(value = "pointcut()")
-    public void validation() throws Throwable {
+    public void before(JoinPoint joinPoint) throws Throwable {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
             .getRequest();
 

@@ -16,7 +16,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import net.jlxxw.robot.filter.common.event.SystemEndEvent;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.data.DataShareProperties;
 import net.jlxxw.robot.filter.data.share.component.DiscoveryClientAdapter;
@@ -25,12 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -57,6 +61,11 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
     private ThreadPoolTaskExecutor robotFilterThreadpool;
     @Autowired
     private LogUtils logUtils;
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Value("${server.port:8080}")
+    private int serverPort;
 
     private final Map<String, NettyClient> clientMap = new ConcurrentHashMap<>();
 
@@ -103,6 +112,14 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
                 }
             }
         });
+        Runtime.getRuntime().addShutdownHook(new Thread(()->{
+            for (String ip : localIpSet) {
+                if ("127.0.0.1".equals(ip)){
+                    continue;
+                }
+                applicationContext.publishEvent(new SystemEndEvent(ip,serverPort));
+            }
+        }));
     }
 
     private void checkAndCreateClusterNettyClient() throws IOException {
@@ -145,8 +162,12 @@ public class RobotFilterDatShareAutoConfiguration implements ApplicationRunner {
         try {
             return cache.get("key", () -> {
                 Set<String> list = discoveryClientAdapter.getClusterClientIpList();
-                list.removeAll(localIpSet);
-                return list;
+                Set<String> tempSet = localIpSet.stream().map(x -> x + ":" + serverPort).collect(Collectors.toSet());
+                list.removeAll(tempSet);
+                return list
+                    .stream()
+                    .map(x -> x.split(":")[0])
+                    .collect(Collectors.toSet());
             });
         } catch (ExecutionException e) {
             throw new RuntimeException(e);

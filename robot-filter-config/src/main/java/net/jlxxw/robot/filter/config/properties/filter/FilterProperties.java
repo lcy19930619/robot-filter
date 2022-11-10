@@ -1,5 +1,6 @@
 package net.jlxxw.robot.filter.config.properties.filter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -11,7 +12,7 @@ public class FilterProperties {
     /**
      * filter name,globally unique
      */
-    private String name;
+    private String name = "default-filter";
     /**
      * lru limit
      */
@@ -24,7 +25,7 @@ public class FilterProperties {
     /**
      * url pattern,un support refresh
      */
-    private Set<String> urlPattern;
+    private Set<String> urlPattern = Collections.singleton("/*");
 
     /**
      * sort by order，small priority
@@ -42,7 +43,7 @@ public class FilterProperties {
      * robot filter ruleProperties
      *
      */
-    private List<RuleProperties> rules;
+    private List<RuleProperties> rules = Collections.singletonList(new RuleProperties());
 
     public String getName() {
         return name;

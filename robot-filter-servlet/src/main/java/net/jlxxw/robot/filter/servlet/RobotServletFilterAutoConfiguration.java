@@ -97,7 +97,7 @@ public class RobotServletFilterAutoConfiguration implements ApplicationRunner {
                     filterRegistrationBean.setFilter(bean);
                 }
                 defaultListableBeanFactory.registerSingleton(beanName + name ,bean);
-                logUtils.info(logger,"register servlet robot filter :{}",beanName);
+                logUtils.info(logger,"register bean:{} class:{}",beanName,className);
             }
         }
 

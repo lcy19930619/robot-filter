@@ -15,10 +15,14 @@ import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.vo.base.RequestResult;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import net.jlxxw.robot.filter.web.aop.LoginCheck;
+import net.jlxxw.robot.filter.web.dto.LoginDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -48,15 +52,13 @@ public class IndexController {
     /**
      * login
      *
-     * @param loginName
-     * @param password
+     * @param loginDTO form info
      * @return
      */
     @Operation(summary = "web ui login method")
     @ResponseBody
-    @PostMapping(value = "login", produces = "application/json")
-    public RequestResult<Boolean> login(@Parameter(description = "login name ") String loginName,
-        @Parameter(description = "password") String password,
+    @PostMapping(value = "login")
+    public RequestResult<Boolean> login(@RequestBody LoginDTO loginDTO,
         @Parameter(hidden = true) HttpServletResponse response) throws Exception {
         String name = properties.getLoginName();
         String dbPassword = properties.getPassword();
@@ -64,10 +66,10 @@ public class IndexController {
         properties.setReturnRejectMessage(true);
         properties.setContentType("application/json");
         properties.setHttpResponseCode(401);
-        if (!name.equals(loginName)) {
+        if (!name.equals(loginDTO.getLoginName())) {
             throw new RuleException("login failed", properties);
         }
-        if (!securityEquals(dbPassword, password)) {
+        if (!securityEquals(dbPassword, loginDTO.getPassword())) {
             throw new RuleException("login failed", properties);
         }
 
@@ -76,13 +78,41 @@ public class IndexController {
 
         String host = RobotServletFilterWebContext.getHost();
         Cookie cookie = new Cookie("x-login", decrypt);
-        cookie.setMaxAge(30 * 60 * 60);
+        cookie.setMaxAge(30 * 60);
         cookie.setDomain(host);
         cookie.setPath("/");
         response.addCookie(cookie);
 
         return RequestResult.success();
     }
+
+    @LoginCheck
+    @Operation(summary = "get current running information")
+    @GetMapping("currentRunning")
+    @ResponseBody
+    public RequestResult getCurrentRunning(){
+
+        return RequestResult.success();
+    }
+
+    @LoginCheck
+    @Operation(summary = "get ip information")
+    @GetMapping("info/ip/{ip}")
+    @ResponseBody
+    public RequestResult getIpInfo(@PathVariable("ip") String ip){
+
+        return RequestResult.success();
+    }
+
+    @LoginCheck
+    @Operation(summary = "get client id information")
+    @GetMapping("info/clientId/{clientId}")
+    @ResponseBody
+    public RequestResult getClientIdInfo(@PathVariable("clientId") String clientId){
+
+        return RequestResult.success();
+    }
+
 
     private boolean securityEquals(String propertiesPassword, String password) {
         int length = propertiesPassword.length();

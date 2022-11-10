@@ -35,6 +35,10 @@ public class SpringCloudSupport implements DiscoveryClientAdapter {
     public Set<String> getClusterClientIpList() {
         List<ServiceInstance> instances = discoveryClient.getInstances(applicationName);
 
-        return instances.stream().map(ServiceInstance::getHost).collect(Collectors.toSet());
+        return instances.stream().map(x->{
+            String host = x.getHost();
+            int port = x.getPort();
+            return host+":"+port;
+        }).collect(Collectors.toSet());
     }
 }

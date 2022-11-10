@@ -60,7 +60,7 @@ public class ParamCheckAop {
     }
 
 
-    @Pointcut("execution(public * net.jlxxw.robot.filter.web.controller.*.*.*(..))")
+    @Pointcut("execution(public * net.jlxxw.robot.filter.web.controller.*.*(..))")
     public void pointcut(){
 
     }

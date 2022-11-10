@@ -38,7 +38,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 
 /**
- * todo done by lcy 2022/11/05
  * if request form robot,this filter decision reject
  *
  * @author chunyang.leng

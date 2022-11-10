@@ -10,7 +10,7 @@ import java.util.Set;
 public interface DiscoveryClientAdapter {
 
     /**
-     * find cluster ,get all node ip
+     * find cluster ,get all node ip and port
      * @return node ip list
      */
     Set<String> getClusterClientIpList();

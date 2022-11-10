@@ -1,8 +1,5 @@
 package net.jlxxw.robot.filter.config.properties.filter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * every one robot filter rule
  *
@@ -14,7 +11,7 @@ public class RuleProperties {
     /**
      * rule name
      */
-    private String name;
+    private String name = "default-rule";
 
     /**
      * interval window
