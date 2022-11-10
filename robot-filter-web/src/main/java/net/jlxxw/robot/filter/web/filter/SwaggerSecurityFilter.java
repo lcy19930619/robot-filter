@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.servlet.filter.response;
+package net.jlxxw.robot.filter.web.filter;
 
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -7,35 +7,27 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.common.log.LogUtils;
-import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+import net.jlxxw.robot.filter.config.properties.ui.UiProperties;
+import net.jlxxw.robot.filter.core.check.IpCheck;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import net.jlxxw.robot.filter.servlet.filter.global.RobotGlobalAuthorizationWhiteFilter;
+import net.jlxxw.robot.filter.servlet.utils.IpUtils;
+import net.jlxxw.robot.filter.web.RobotFilterWebAutoConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.web.util.NestedServletException;
 
 /**
- * handler RuleException
- *
  * @author chunyang.leng
- * @date 2022-11-03 12:45 PM
+ * @date 2022-11-10 4:45 PM
  */
-@Order(Integer.MIN_VALUE)
-@Component
-public class RobotResponseFilter implements Filter {
-    private static final Logger logger = LoggerFactory.getLogger(RobotGlobalAuthorizationWhiteFilter.class);
-    @Autowired
-    private LogUtils logUtils;
-    @Autowired
-    private RobotFilterProperties robotFilterProperties;
+public class SwaggerSecurityFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotFilterWebAutoConfiguration.class);
 
+    private UiProperties uiProperties;
+    private IpUtils ipUtils;
+    private IpCheck ipCheck;
+    private LogUtils logUtils;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -57,7 +49,8 @@ public class RobotResponseFilter implements Filter {
      */
     @Override public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
-        logUtils.info(logger,"filter:RobotResponseFilter initialized");
+        logUtils.info(logger,"filter: SwaggerSecurityFilter initialized");
+
     }
 
     /**
@@ -112,34 +105,32 @@ public class RobotResponseFilter implements Filter {
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
 
-        try {
-            logUtils.debug(logger, "data arrival filter: RobotResponseFilter");
+        logUtils.debug(logger, "data arrival filter: SwaggerSecurityFilter");
+
+        String ipAddress = ipUtils.getIpAddress(request);
+
+        boolean b = ipCheck.checkIpInSet(ipAddress, uiProperties.getAllowIpList());
+        if (b){
             chain.doFilter(request, response);
-        } catch (RuleException e) {
-           handles(e,response);
-        }catch (NestedServletException e){
-            Throwable cause = e.getCause();
-            if (cause instanceof RuleException){
-                handles((RuleException) cause, response);
-                return;
-            }
-            throw e;
+        }else{
+            RuleProperties ruleProperties = new RuleProperties();
+            throw new RuleException("no allow request ui data",ruleProperties);
         }
     }
 
-    private void handles(RuleException e,ServletResponse response) throws IOException {
-        RuleProperties properties = e.getRuleProperties();
-        boolean returnRejectMessage = properties.isReturnRejectMessage();
-        int httpCode = properties.getHttpResponseCode();
+    public void setUiProperties(UiProperties uiProperties) {
+        this.uiProperties = uiProperties;
+    }
 
-        String contentType = properties.getContentType();
+    public void setIpUtils(IpUtils ipUtils) {
+        this.ipUtils = ipUtils;
+    }
 
-        HttpServletResponse servletResponse = (HttpServletResponse) response;
-        servletResponse.setContentType(contentType);
-        servletResponse.setStatus(httpCode);
-        if (returnRejectMessage) {
-            servletResponse.getWriter().println(e.getMessage());
-            logUtils.info(logger, "RobotResponseFilter handler rejected message");
-        }
+    public void setIpCheck(IpCheck ipCheck) {
+        this.ipCheck = ipCheck;
+    }
+
+    public void setLogUtils(LogUtils logUtils) {
+        this.logUtils = logUtils;
     }
 }

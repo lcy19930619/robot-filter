@@ -1,5 +1,7 @@
 package net.jlxxw.robot.filter.config.properties.ui;
 
+import java.util.Collections;
+import java.util.Set;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +16,11 @@ public class UiProperties {
     private String loginName = "admin";
 
     private String password = "robot.filter.ui";
+
+    /**
+     * ip or ip range
+     */
+    private Set<String> allowIpList = Collections.singleton("127.0.0.1");
 
     public String getLoginName() {
         return loginName;
@@ -31,4 +38,11 @@ public class UiProperties {
         this.password = password;
     }
 
+    public Set<String> getAllowIpList() {
+        return allowIpList;
+    }
+
+    public void setAllowIpList(Set<String> allowIpList) {
+        this.allowIpList = allowIpList;
+    }
 }

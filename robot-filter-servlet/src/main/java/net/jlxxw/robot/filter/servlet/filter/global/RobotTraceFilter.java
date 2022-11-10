@@ -7,7 +7,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.config.properties.trace.RobotFilterTraceProperties;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
  * @date 2022-11-06 3:33 PM
  */
 @Order(Integer.MIN_VALUE + 10)
-@WebFilter(filterName = "robot.trace.filter",urlPatterns = "/*")
 @Component
 public class RobotTraceFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(RobotTraceFilter.class);

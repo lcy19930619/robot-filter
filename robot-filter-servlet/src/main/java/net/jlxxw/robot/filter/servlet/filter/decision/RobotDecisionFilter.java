@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -33,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.CollectionUtils;
 
@@ -46,9 +44,7 @@ import org.springframework.util.CollectionUtils;
 public class RobotDecisionFilter implements Filter, DataCore {
     private static final Logger logger = LoggerFactory.getLogger(RobotDecisionFilter.class);
     private FilterProperties filterProperties;
-    @Autowired
     private ApplicationContext applicationContext;
-    @Autowired
     private LogUtils logUtils;
     /**
      * key rule name
@@ -62,37 +58,10 @@ public class RobotDecisionFilter implements Filter, DataCore {
      */
     private Map<String, Map<String, SimpleCountUtils>> ruleIpLru = null;
 
-    public RobotDecisionFilter(FilterProperties filterProperties) {
-        this.filterProperties = filterProperties;
-    }
-
     /**
      * limit
      */
     private int lru = 200;
-
-    @PostConstruct
-    private void init() {
-        lru = filterProperties.getLru();
-        ruleClientIdLru = new LimitLru<>(lru);
-        ruleIpLru = new LimitLru<>(lru);
-
-        Set<String> nameSet = new HashSet<>();
-        List<RuleProperties> rules = filterProperties.getRules();
-        if (CollectionUtils.isEmpty(rules)) {
-            return;
-        }
-        rules.forEach(x -> {
-            if (StringUtils.isBlank(x.getName())) {
-                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name is null !!!");
-            }
-            if (nameSet.contains(x.getName())) {
-                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name '" + x.getName() + "' is repeat !!!");
-            }
-            nameSet.add(x.getName());
-        });
-        logUtils.info(logger,"filter:{} initialized",filterProperties.getName());
-    }
 
     /**
      * Called by the web container to indicate to a filter that it is being
@@ -113,8 +82,28 @@ public class RobotDecisionFilter implements Filter, DataCore {
      *                     filter instance being initialised
      * @throws ServletException if the initialisation fails
      */
-    @Override public void init(FilterConfig filterConfig) throws ServletException {
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        lru = filterProperties.getLru();
+        ruleClientIdLru = new LimitLru<>(lru);
 
+        ruleIpLru = new LimitLru<>(lru);
+
+        Set<String> nameSet = new HashSet<>();
+        List<RuleProperties> rules = filterProperties.getRules();
+        if (CollectionUtils.isEmpty(rules)) {
+            return;
+        }
+        rules.forEach(x -> {
+            if (StringUtils.isBlank(x.getName())) {
+                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name is null !!!");
+            }
+            if (nameSet.contains(x.getName())) {
+                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name '" + x.getName() + "' is repeat !!!");
+            }
+            nameSet.add(x.getName());
+        });
+        logUtils.info(logger,"filter:{} initialized",filterProperties.getName());
     }
 
     /**
@@ -142,7 +131,7 @@ public class RobotDecisionFilter implements Filter, DataCore {
             chain.doFilter(request, response);
             return;
         }
-        logUtils.debug(logger, "data arrival filter:{}",filterProperties.getName());
+        logUtils.debug(logger, "data arrival filter: {}",filterProperties.getName());
         boolean inWhiteList = RobotServletFilterWebContext.inWhiteList();
         if (inWhiteList) {
             chain.doFilter(request, response);
@@ -178,10 +167,10 @@ public class RobotDecisionFilter implements Filter, DataCore {
                         ruleClientIdLru.put(name, clientIdLru);
                     }
 
-                    SimpleCountUtils clientIdSimpleCountUtils = clientIdLru.get(ip);
+                    SimpleCountUtils clientIdSimpleCountUtils = clientIdLru.get(clientId);
                     if (Objects.isNull(clientIdSimpleCountUtils)) {
                         clientIdSimpleCountUtils = new SimpleCountUtils(maxAllow);
-                        ipLru.put(ip, clientIdSimpleCountUtils);
+                        clientIdLru.put(clientId, clientIdSimpleCountUtils);
                     }
 
                     int passByClientId = countCurrentPassByClientId(clientId, name);
@@ -339,5 +328,13 @@ public class RobotDecisionFilter implements Filter, DataCore {
 
     public void setFilterProperties(FilterProperties filterProperties) {
         this.filterProperties = filterProperties;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public void setLogUtils(LogUtils logUtils) {
+        this.logUtils = logUtils;
     }
 }
