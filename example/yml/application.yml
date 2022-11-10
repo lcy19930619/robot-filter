@@ -1,3 +1,6 @@
+logging:
+  level:
+    net.jlxxw: debug
 robot:
   filter:
     share:
@@ -62,7 +65,7 @@ robot:
               http-response-code: 403
     log:
       enabled: true
-      level: info
+      level: debug
     trace:
       allow-add-blacklisted: true
       allow-remove-blacklisted: true
@@ -70,7 +73,7 @@ robot:
       enable-trace-limit: true
       id-pass: 300
       ip-pass: 10
-      max-age: 300
+      max-age: 10
       name: x-trace
     global-ip-whitelist:
       - 127.0.0.1
@@ -78,3 +81,16 @@ robot:
     global-ip-blacklist:
       - 1.2.3.4
       - 4.3.2.1/24
+    origin-whitelist:
+      - localhost:8080
+      - local.jlxxw.net
+    referer-whitelist:
+      - local.jlxxw.net
+    ui:
+      login-name: admin
+      password: admin
+springdoc:
+  api-docs:
+    enabled: true
+  packagesToScan: net.jlxxw.robot.filter.web.controller
+
