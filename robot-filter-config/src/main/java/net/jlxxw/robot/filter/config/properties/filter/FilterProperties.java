@@ -1,6 +1,5 @@
 package net.jlxxw.robot.filter.config.properties.filter;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -9,6 +8,10 @@ import java.util.Set;
  * @author lcy
  */
 public class FilterProperties {
+    /**
+     * filter name,globally unique
+     */
+    private String name;
     /**
      * lru limit
      */
@@ -29,10 +32,25 @@ public class FilterProperties {
     private int order;
 
     /**
+     * custom filter class, default is net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter
+     *
+     * <b>the class must is RobotDecisionFilter subclass</b>
+     */
+    private String className = "net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter";
+
+    /**
      * robot filter ruleProperties
      *
      */
-    private List<RuleProperties> rules = Collections.singletonList(new RuleProperties());
+    private List<RuleProperties> rules;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public boolean isEnabled() {
         return enabled;
@@ -73,5 +91,13 @@ public class FilterProperties {
 
     public void setLru(int lru) {
         this.lru = lru;
+    }
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

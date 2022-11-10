@@ -14,7 +14,7 @@ public class RuleProperties {
     /**
      * rule name
      */
-    private String name = "default-rule";
+    private String name;
 
     /**
      * interval window
@@ -24,7 +24,7 @@ public class RuleProperties {
     /**
      * robot allow pass max value
      */
-    private int maxAllow = 100;
+    private int maxAllow = 50;
 
     /**
      * allow to add blacklisted

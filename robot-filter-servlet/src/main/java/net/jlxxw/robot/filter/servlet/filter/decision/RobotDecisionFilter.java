@@ -19,7 +19,6 @@ import net.jlxxw.robot.filter.common.event.AddClientToBlackListEvent;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
-import net.jlxxw.robot.filter.config.properties.filter.servlet.RobotFilterServletFilterProperties;
 import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.limit.SimpleCountUtils;
@@ -33,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -44,11 +41,8 @@ import org.springframework.util.CollectionUtils;
  * @author chunyang.leng
  * @date 2022-11-04 11:32 AM
  */
-@Component
-@Order(10)
 public class RobotDecisionFilter implements Filter, DataCore {
-    @Autowired
-    private RobotFilterServletFilterProperties robotFilterServletFilterProperties;
+
     private FilterProperties filterProperties;
     @Autowired
     private ApplicationContext applicationContext;
@@ -64,6 +58,10 @@ public class RobotDecisionFilter implements Filter, DataCore {
      */
     private Map<String, Map<String, SimpleCountUtils>> ruleIpLru = null;
 
+    public RobotDecisionFilter(FilterProperties filterProperties) {
+        this.filterProperties = filterProperties;
+    }
+
     /**
      * limit
      */
@@ -71,16 +69,24 @@ public class RobotDecisionFilter implements Filter, DataCore {
 
     @PostConstruct
     private void init() {
-        filterProperties = robotFilterServletFilterProperties.getFilter();
         lru = filterProperties.getLru();
         ruleClientIdLru = new LimitLru<>(lru);
         ruleIpLru = new LimitLru<>(lru);
 
+        Set<String> nameSet = new HashSet<>();
         List<RuleProperties> rules = filterProperties.getRules();
         if (CollectionUtils.isEmpty(rules)) {
-          throw new BeanCreationException("filter not found rule");
+            return;
         }
-
+        rules.forEach(x -> {
+            if (StringUtils.isBlank(x.getName())) {
+                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name is null !!!");
+            }
+            if (nameSet.contains(x.getName())) {
+                throw new BeanCreationException("filter: " + filterProperties.getName() + ",rule name '" + x.getName() + "' is repeat !!!");
+            }
+            nameSet.add(x.getName());
+        });
     }
 
     /**
@@ -175,16 +181,16 @@ public class RobotDecisionFilter implements Filter, DataCore {
                     int passByClientId = countCurrentPassByClientId(clientId, name);
                     int passByByIp = countCurrentPassByIp(ip, name);
                     if (passByClientId > maxAllow) {
-                        applicationContext.publishEvent(new AddClientToBlackListEvent(ip,clientId,rule));
+                        applicationContext.publishEvent(new AddClientToBlackListEvent(ip,clientId,filterProperties.getName(),rule));
                         throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
                     }
                     if (passByByIp > maxAllow) {
-                        applicationContext.publishEvent(new AddClientToBlackListEvent(ip,clientId,rule));
+                        applicationContext.publishEvent(new AddClientToBlackListEvent(ip,clientId,filterProperties.getName(),rule));
                         throw new RuleException("maxAllow must be less than than " + maxAllow, rule);
                     }
                     incIp(ip, name);
                     incClientId(clientId, name);
-                    ReceiveRequestEvent event = new ReceiveRequestEvent(ip, host, clientId, name);
+                    ReceiveRequestEvent event = new ReceiveRequestEvent(ip, host, clientId, filterProperties.getName(),name);
                     applicationContext.publishEvent(event);
                 }
             }
@@ -229,6 +235,7 @@ public class RobotDecisionFilter implements Filter, DataCore {
     public RobotClientIdVO countClientId() {
         Map<String,Map<String,SimpleCountUtils>> clone = ruleIpLru;
         RobotClientIdVO vo = new RobotClientIdVO();
+        vo.setFilterName(filterProperties.getName());
         Map<String,List<ClientIdCountVO>> map = new HashMap<>();
         if (CollectionUtils.isEmpty(clone)){
             vo.setData(map);
@@ -258,6 +265,7 @@ public class RobotDecisionFilter implements Filter, DataCore {
     public RobotIpVO countIp() {
         Map<String,Map<String,SimpleCountUtils>> clone = ruleClientIdLru;
         RobotIpVO vo = new RobotIpVO();
+        vo.setFilterName(filterProperties.getName());
         Map<String,List<IpCountVO>> map = new HashMap<String,List<IpCountVO>>();
         if (CollectionUtils.isEmpty(clone)){
             vo.setData(map);
