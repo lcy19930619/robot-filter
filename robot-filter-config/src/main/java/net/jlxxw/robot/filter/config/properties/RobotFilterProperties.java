@@ -1,5 +1,6 @@
 package net.jlxxw.robot.filter.config.properties;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,11 +30,11 @@ public class RobotFilterProperties {
     /**
      * referer list,not in list, cannot access system
      */
-    private Set<String> refererWhitelist = new HashSet<>();
+    private Set<String> refererWhitelist = Collections.singleton("localhost");
     /**
      * origin list,not in list, cannot access system
      */
-    private Set<String> originWhitelist = new HashSet<>();
+    private Set<String> originWhitelist = Collections.singleton("localhost");
     /**
      * in white list, no check
      *

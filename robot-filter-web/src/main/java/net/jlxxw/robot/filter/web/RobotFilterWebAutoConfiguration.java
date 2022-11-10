@@ -71,12 +71,12 @@ public class RobotFilterWebAutoConfiguration implements ServletContextInitialize
 
         Set<String> list = new HashSet<>();
         list.add(path1);
-        list.add(path1 + "/**/*");
+        list.add(path1 + "/**");
         list.add(path2);
-        list.add(path2 + "/**/*");
+        list.add(path2 + "/**");
         list.add(path3);
-        list.add(path3 + "/**/*");
-        list.add( "/swagger-ui/**/*");
+        list.add(path3 + "/**");
+        list.add( "/swagger-ui/**");
 
         SwaggerSecurityFilter filter = new SwaggerSecurityFilter();
         filter.setIpUtils(ipUtils);

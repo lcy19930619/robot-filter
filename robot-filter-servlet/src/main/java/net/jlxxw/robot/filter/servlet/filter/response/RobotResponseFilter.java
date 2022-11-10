@@ -139,7 +139,8 @@ public class RobotResponseFilter implements Filter {
         servletResponse.setStatus(httpCode);
         if (returnRejectMessage) {
             servletResponse.getWriter().println(e.getMessage());
-            logUtils.info(logger, "RobotResponseFilter handler rejected message");
         }
+        logUtils.info(logger, "RobotResponseFilter handler rejected message:{}",e.getMessage());
+
     }
 }
