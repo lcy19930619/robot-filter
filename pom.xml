@@ -78,6 +78,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger-annotations.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-common</artifactId>
                 <version>${robot-filter.version}</version>
