@@ -8,9 +8,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
+import net.jlxxw.robot.filter.servlet.filter.global.RobotGlobalAuthorizationWhiteFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,7 +29,9 @@ import org.springframework.web.util.NestedServletException;
 @Order(Integer.MIN_VALUE)
 @Component
 public class RobotResponseFilter implements Filter {
-
+    private static final Logger logger = LoggerFactory.getLogger(RobotGlobalAuthorizationWhiteFilter.class);
+    @Autowired
+    private LogUtils logUtils;
     @Autowired
     private RobotFilterProperties robotFilterProperties;
 
@@ -105,6 +111,7 @@ public class RobotResponseFilter implements Filter {
         FilterChain chain) throws IOException, ServletException {
 
         try {
+            logUtils.debug(logger, "data arrival filter: RobotResponseFilter");
             chain.doFilter(request, response);
         } catch (RuleException e) {
            handles(e,response);
@@ -112,6 +119,7 @@ public class RobotResponseFilter implements Filter {
             Throwable cause = e.getCause();
             if (cause instanceof RuleException){
                 handles((RuleException) cause, response);
+                return;
             }
             throw e;
         }
@@ -129,6 +137,7 @@ public class RobotResponseFilter implements Filter {
         servletResponse.setStatus(httpCode);
         if (returnRejectMessage) {
             servletResponse.getWriter().println(e.getMessage());
+            logUtils.info(logger, "RobotResponseFilter handler rejected message");
         }
     }
 }

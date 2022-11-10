@@ -17,6 +17,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import net.jlxxw.robot.filter.common.event.AddClientToBlackListEvent;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.data.DataCore;
@@ -29,6 +30,8 @@ import net.jlxxw.robot.filter.core.vo.RobotClientIdVO;
 import net.jlxxw.robot.filter.core.vo.RobotIpVO;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -42,10 +45,12 @@ import org.springframework.util.CollectionUtils;
  * @date 2022-11-04 11:32 AM
  */
 public class RobotDecisionFilter implements Filter, DataCore {
-
+    private static final Logger logger = LoggerFactory.getLogger(RobotDecisionFilter.class);
     private FilterProperties filterProperties;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private LogUtils logUtils;
     /**
      * key rule name
      * value: key client id,value : count util
@@ -87,6 +92,7 @@ public class RobotDecisionFilter implements Filter, DataCore {
             }
             nameSet.add(x.getName());
         });
+        logUtils.info(logger,"filter:{} initialized",filterProperties.getName());
     }
 
     /**
@@ -137,6 +143,7 @@ public class RobotDecisionFilter implements Filter, DataCore {
             chain.doFilter(request, response);
             return;
         }
+        logUtils.debug(logger, "data arrival filter:{}",filterProperties.getName());
         boolean inWhiteList = RobotServletFilterWebContext.inWhiteList();
         if (inWhiteList) {
             chain.doFilter(request, response);

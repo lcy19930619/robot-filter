@@ -8,12 +8,14 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
-import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.check.HttpHeaderCheck;
+import net.jlxxw.robot.filter.servlet.utils.IpUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -26,12 +28,17 @@ import org.springframework.stereotype.Component;
 @Order(Integer.MIN_VALUE + 3)
 @Component
 public class RobotHttpRefererFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotHttpRefererFilter.class);
+    @Autowired
+    private LogUtils logUtils;
+
     @Autowired
     private HttpHeaderCheck headerCheck;
     @Autowired
-    private CacheService cacheService;
-    @Autowired
     private RobotFilterProperties robotFilterProperties;
+    @Autowired
+    private IpUtils ipUtils;
+
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -106,12 +113,16 @@ public class RobotHttpRefererFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotHttpRefererFilter");
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String referer = httpServletRequest.getHeader("Referer");
         if (StringUtils.isNotBlank(referer)) {
             Set<String> set = robotFilterProperties.getRefererWhitelist();
             headerCheck.checkReferer(referer,set);
+        }else {
+            String ipAddress = ipUtils.getIpAddress(request);
+            logUtils.warn(logger, "RobotHttpRefererFilter found a no origin request,ip:{}",ipAddress);
         }
         chain.doFilter(request, response);
     }

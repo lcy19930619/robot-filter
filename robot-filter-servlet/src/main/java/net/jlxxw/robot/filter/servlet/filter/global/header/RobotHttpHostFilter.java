@@ -8,9 +8,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +27,11 @@ import org.springframework.stereotype.Component;
 @Order(Integer.MIN_VALUE + 1)
 @Component
 public class RobotHttpHostFilter implements Filter {
+
+    private static final Logger logger = LoggerFactory.getLogger(RobotHttpHostFilter.class);
+
+    @Autowired
+    private LogUtils logUtils;
 
     private final RuleProperties ruleProperties = new RuleProperties();
     {
@@ -104,6 +113,7 @@ public class RobotHttpHostFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotHttpHostFilter");
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String host = httpServletRequest.getHeader("Host");

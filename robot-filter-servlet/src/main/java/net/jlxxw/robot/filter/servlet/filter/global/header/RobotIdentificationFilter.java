@@ -7,10 +7,14 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.identity.ClientIdentification;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -23,6 +27,9 @@ import org.springframework.stereotype.Component;
 @Order(Integer.MIN_VALUE + 5)
 @Component
 public class RobotIdentificationFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotIdentificationFilter.class);
+    @Autowired
+    private LogUtils logUtils;
     @Autowired
     private ClientIdentification clientIdentification;
     private final RuleProperties ruleProperties = new RuleProperties();
@@ -105,6 +112,7 @@ public class RobotIdentificationFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotIdentificationFilter");
 
         String clientId = RobotServletFilterWebContext.getClientId();
         String ip = RobotServletFilterWebContext.getIp();
@@ -112,6 +120,9 @@ public class RobotIdentificationFilter implements Filter {
             clientId = clientIdentification.verifyClientId(clientId, ip);
             RobotServletFilterWebContext.setClientId(clientId);
         } catch (Exception e) {
+            HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+            StringBuffer url = httpServletRequest.getRequestURL();
+            logUtils.warn(logger, "reject request, RobotIdentificationFilter found invalid client,ip:{},clientId:{},request url:{}",ip, clientId,url.toString());
             throw new RuleException("Illegal user",ruleProperties);
         }
         chain.doFilter(request, response);

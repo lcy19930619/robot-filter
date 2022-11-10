@@ -8,11 +8,12 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
-import net.jlxxw.robot.filter.core.cache.CacheService;
 import net.jlxxw.robot.filter.core.check.IpCheck;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,12 @@ import org.springframework.stereotype.Component;
 @Order(Integer.MIN_VALUE + 9)
 @Component
 public class RobotIpGlobalWhiteListFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotIpGlobalWhiteListFilter.class);
+    @Autowired
+    private LogUtils logUtils;
+
     @Autowired
     private IpCheck ipCheck;
-    @Autowired
-    private CacheService cacheService;
     @Autowired
     private RobotFilterProperties robotFilterProperties;
 
@@ -105,6 +108,7 @@ public class RobotIpGlobalWhiteListFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotIpGlobalWhiteListFilter");
 
         String clientIp = RobotServletFilterWebContext.getIp();
 

@@ -8,9 +8,12 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -22,6 +25,10 @@ import org.springframework.stereotype.Component;
 @Order(Integer.MIN_VALUE + 8)
 @Component
 public class RobotGlobalAuthorizationWhiteFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotGlobalAuthorizationWhiteFilter.class);
+    @Autowired
+    private LogUtils logUtils;
+
     @Autowired
     private RobotFilterProperties robotFilterProperties;
 
@@ -99,9 +106,10 @@ public class RobotGlobalAuthorizationWhiteFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotGlobalAuthorizationWhiteFilter");
 
-       String authorization = RobotServletFilterWebContext.getAuthorization();
-        if (StringUtils.isNotBlank(authorization)){
+        String authorization = RobotServletFilterWebContext.getAuthorization();
+        if (StringUtils.isNotBlank(authorization)) {
             Set<String> whitelist = robotFilterProperties.getGlobalAuthorizationWhitelist();
             RobotServletFilterWebContext.setInWhiteList(whitelist.contains(authorization));
         }

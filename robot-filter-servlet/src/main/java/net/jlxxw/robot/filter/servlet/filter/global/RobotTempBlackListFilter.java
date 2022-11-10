@@ -8,11 +8,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.black.BlackList;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,10 @@ import org.springframework.stereotype.Component;
 @Component
 @Order(Integer.MIN_VALUE + 7)
 public class RobotTempBlackListFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotTempBlackListFilter.class);
+    @Autowired
+    private LogUtils logUtils;
+
     @Autowired
     private BlackList blackList;
     /**
@@ -100,17 +106,20 @@ public class RobotTempBlackListFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotTempBlackListFilter");
 
         String clientId = RobotServletFilterWebContext.getClientId();
         String ip = RobotServletFilterWebContext.getIp();
 
         RuleProperties properties = blackList.inBlackList(ip);
         if (Objects.nonNull(properties)){
+            logUtils.warn(logger, "temp blacklist already filter ip:{} client id:{}",ip,clientId);
             throw new RuleException(" in black list",properties);
         }
 
         properties = blackList.inBlackList(clientId);
         if (Objects.nonNull(properties)){
+            logUtils.warn(logger, "temp blacklist already filter ip:{} client id:{}",ip,clientId);
             throw new RuleException(" in black list",properties);
         }
 

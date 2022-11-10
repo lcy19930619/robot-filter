@@ -8,11 +8,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.config.properties.trace.RobotFilterTraceProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.identity.ClientIdentification;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,10 @@ import org.springframework.stereotype.Component;
 @WebFilter(filterName = "robot.trace.filter",urlPatterns = "/*")
 @Component
 public class RobotTraceFilter implements Filter {
+    private static final Logger logger = LoggerFactory.getLogger(RobotTraceFilter.class);
+    @Autowired
+    private LogUtils logUtils;
+
     @Autowired
     private RobotFilterTraceProperties robotFilterTraceProperties;
     @Autowired
@@ -108,6 +115,9 @@ public class RobotTraceFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
+
+        logUtils.debug(logger, "data arrival filter: RobotTraceFilter");
+
         boolean whiteList = RobotServletFilterWebContext.inWhiteList();
         if (whiteList){
             chain.doFilter(request, response);
@@ -129,6 +139,7 @@ public class RobotTraceFilter implements Filter {
 
     private void traceCheck(int current, int max) {
         if (current >= max) {
+            // build reject rule
             RuleProperties properties = new RuleProperties();
             long blacklistedTime = robotFilterTraceProperties.getBlacklistedTime();
             boolean allowAddBlacklisted = robotFilterTraceProperties.isAllowAddBlacklisted();
@@ -136,8 +147,11 @@ public class RobotTraceFilter implements Filter {
             properties.setAllowAddBlacklisted(allowAddBlacklisted);
             properties.setAllowRemoveBlacklisted(allowRemoveBlacklisted);
             properties.setBlacklistedTime(blacklistedTime);
+            String ip = RobotServletFilterWebContext.getIp();
+            String clientId = RobotServletFilterWebContext.getClientId();
+            logUtils.warn(logger, "trace reject request ,ip:{},client id:{},current:{},max:{}",ip,clientId,current,max);
 
-            throw new RuleException("reject allowed", properties);
+            throw new RuleException("reject request", properties);
         }
     }
 }

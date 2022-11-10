@@ -1,5 +1,6 @@
 package net.jlxxw.robot.filter.servlet.utils;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -68,6 +69,9 @@ public class IpUtils {
             ip = "127.0.0.1";
         }
         return ip;
+    }
+    public String getIpAddress(ServletRequest request){
+        return getIpAddress((HttpServletRequest) request);
     }
 
 }

@@ -34,9 +34,9 @@ import org.springframework.stereotype.Component;
 public class RobotBaseInfoFilter implements Filter {
     private static final Logger logger = LoggerFactory.getLogger(RobotBaseInfoFilter.class);
     @Autowired
-    private IpUtils ipUtils;
-    @Autowired
     private LogUtils logUtils;
+    @Autowired
+    private IpUtils ipUtils;
     @Autowired
     private RobotFilterTraceProperties robotFilterTraceProperties;
     @Autowired
@@ -116,6 +116,7 @@ public class RobotBaseInfoFilter implements Filter {
      */
     @Override public void doFilter(ServletRequest request, ServletResponse response,
         FilterChain chain) throws IOException, ServletException {
+        logUtils.debug(logger, "data arrival filter: RobotBaseInfoFilter");
 
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
@@ -132,18 +133,20 @@ public class RobotBaseInfoFilter implements Filter {
 
             Cookie[] cookies = httpServletRequest.getCookies();
             if (Objects.isNull(cookies)) {
-                String clientId = createClientId( (HttpServletResponse) response);
+                String clientId = createClientId((HttpServletResponse) response);
                 RobotServletFilterWebContext.setClientId(clientId);
+                logUtils.info(logger, "ip:{} no has cookie, creation client id: {}", ipAddress, clientId);
                 return;
             }
             for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(robotFilterTraceProperties.getName())){
+                if (cookie.getName().equals(robotFilterTraceProperties.getName())) {
                     RobotServletFilterWebContext.setClientId(cookie.getValue());
                     return;
                 }
             }
-            String clientId = createClientId( (HttpServletResponse) response);
+            String clientId = createClientId((HttpServletResponse) response);
             RobotServletFilterWebContext.setClientId(clientId);
+            logUtils.info(logger, "ip:{} creation client id: {}", ipAddress, clientId);
 
             logUtils.debug(logger, "robot filter get base info success,client ip: {},origin:{},referer:{},host:{}", ipAddress, origin, referer, host);
         } catch (Exception e) {
@@ -157,12 +160,11 @@ public class RobotBaseInfoFilter implements Filter {
         }
     }
 
-
-    private String createClientId( HttpServletResponse response){
+    private String createClientId(HttpServletResponse response) {
         try {
             String ip = RobotServletFilterWebContext.getIp();
             String id = clientIdentification.createClientId(ip);
-            Cookie cookie = new Cookie(robotFilterTraceProperties.getName(),id);
+            Cookie cookie = new Cookie(robotFilterTraceProperties.getName(), id);
             cookie.setDomain(RobotServletFilterWebContext.getHost());
             cookie.setPath("/");
             cookie.setMaxAge(robotFilterTraceProperties.getMaxAge());
