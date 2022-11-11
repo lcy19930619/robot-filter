@@ -59,7 +59,7 @@ public class RobotServletFilterAutoConfiguration implements  ServletContextIniti
             FilterRegistration.Dynamic dynamic = servletContext.addFilter(name, filter);
 
             String[] url = new String[1];
-            url[0] = "/**";
+            url[0] = "/*";
             dynamic.addMappingForUrlPatterns(request,true,url);
         }
 
