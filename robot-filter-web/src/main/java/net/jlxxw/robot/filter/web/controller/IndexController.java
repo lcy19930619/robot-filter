@@ -46,7 +46,7 @@ public class IndexController {
     @Operation(summary = "to index page")
     @GetMapping
     public String index() {
-        return "index";
+        return "index.html";
     }
 
     /**

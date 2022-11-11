@@ -38,5 +38,9 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.jlxxw</groupId>
+            <artifactId>robot-filter-ui</artifactId>
+        </dependency>
     </dependencies>
 </project>

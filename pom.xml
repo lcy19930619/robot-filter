@@ -15,8 +15,8 @@
         <module>robot-filter-servlet</module>
         <module>robot-filter-spring-cloud-gateway</module>
         <module>robot-filter-data-share</module>
-        <module>robot-filter-web</module>
         <module>robot-filter-ui</module>
+        <module>robot-filter-web</module>
     </modules>
     <name>robot-filter</name>
     <description>web robot filter</description>
@@ -88,6 +88,11 @@
             <dependency>
                 <groupId>net.jlxxw</groupId>
                 <artifactId>robot-filter-common</artifactId>
+                <version>${robot-filter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.jlxxw</groupId>
+                <artifactId>robot-filter-ui</artifactId>
                 <version>${robot-filter.version}</version>
             </dependency>
             <dependency>

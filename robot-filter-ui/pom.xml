@@ -13,12 +13,9 @@
 
     <properties>
         <!-- 前端项目编译后的dist目录路径 -->
-        <frontend-project-dist-dir>${basedir}/target</frontend-project-dist-dir>
-        <!--前端打包-->
+        <frontend-project-dist-dir>${basedir}/dist</frontend-project-dist-dir>
         <maven-frontend-plugin.version>1.12.0</maven-frontend-plugin.version>
         <maven-frontend-plugin.nodeVersion>v16.13.1</maven-frontend-plugin.nodeVersion>
-        <!--        <maven-frontend-plugin.nodeVersion>v9.9.0</maven-frontend-plugin.nodeVersion>-->
-        <!--        <maven-frontend-plugin.npmVersion>6.9.0</maven-frontend-plugin.npmVersion>-->
         <maven-frontend-plugin.npmVersion>8.1.2</maven-frontend-plugin.npmVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -33,13 +30,21 @@
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven-clean-plugin}</version>
                 <configuration>
+                    <excludeDefaultDirectories>false</excludeDefaultDirectories>
                     <filesets>
                         <fileset>
-                            <!-- 前端资源目录，即：存放前端包目录-->
-                            <directory>src/main/resources/static</directory>
+                            <directory>${basedir}/src/main/resources/static/</directory>
+                            <includes>
+                                <include>css/*</include>
+                                <include>js/*</include>
+                                <include>img/*</include>
+                                <include>fonts/*</include>
+                                <include>*.vue</include>
+                                <include>*.ico</include>
+                                <include>*.html</include>
+                            </includes>
                         </fileset>
                         <fileset>
-                            <!-- Vue项目打包自动生成的dist目录 -->
                             <directory>${frontend-project-dist-dir}</directory>
                         </fileset>
                     </filesets>
