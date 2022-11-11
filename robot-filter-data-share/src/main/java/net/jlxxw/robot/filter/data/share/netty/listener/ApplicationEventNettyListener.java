@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * @author chunyang.leng
  * @date 2022-11-03 4:23 PM
  */
-@Component
 public class ApplicationEventNettyListener {
 
     @Autowired
