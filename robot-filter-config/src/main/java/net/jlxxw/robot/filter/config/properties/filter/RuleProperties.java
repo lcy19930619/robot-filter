@@ -15,6 +15,7 @@ public class RuleProperties {
 
     /**
      * interval window
+     * unit is milliseconds
      */
     private long interval = 1000;
 

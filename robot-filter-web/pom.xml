@@ -29,10 +29,7 @@
             <groupId>net.jlxxw</groupId>
             <artifactId>robot-filter-servlet</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.jlxxw</groupId>
-            <artifactId>robot-filter-data-share</artifactId>
-        </dependency>
+
 
         <dependency>
             <groupId>org.springdoc</groupId>

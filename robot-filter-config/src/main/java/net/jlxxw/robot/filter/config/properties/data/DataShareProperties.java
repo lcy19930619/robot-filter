@@ -1,6 +1,7 @@
 package net.jlxxw.robot.filter.config.properties.data;
 
 import net.jlxxw.robot.filter.config.properties.data.netty.NettyProperties;
+import net.jlxxw.robot.filter.config.properties.data.redis.RobotFilterRedisProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +26,11 @@ public class DataShareProperties {
      */
     private NettyProperties netty = new NettyProperties();
 
+    /**
+     * redis properties
+     */
+    private RobotFilterRedisProperties redis = new RobotFilterRedisProperties();
+
     public NettyProperties getNetty() {
         return netty;
     }
@@ -39,6 +45,14 @@ public class DataShareProperties {
 
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public RobotFilterRedisProperties getRedis() {
+        return redis;
+    }
+
+    public void setRedis(RobotFilterRedisProperties redis) {
+        this.redis = redis;
     }
 
     enum Model{

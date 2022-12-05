@@ -49,7 +49,7 @@ public class SwaggerSecurityFilter implements Filter {
      */
     @Override public void init(FilterConfig filterConfig) throws ServletException {
         Filter.super.init(filterConfig);
-        logUtils.info(logger,"filter: SwaggerSecurityFilter initialized");
+        logUtils.info(logger,"filter:SwaggerSecurityFilter initialized");
 
     }
 

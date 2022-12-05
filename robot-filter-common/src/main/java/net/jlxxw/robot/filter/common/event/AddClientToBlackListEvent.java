@@ -17,6 +17,10 @@ public class AddClientToBlackListEvent extends ApplicationEvent {
 
     public AddClientToBlackListEvent(String ip,String clientId,String filterName, RuleProperties ruleProperties){
         super(clientId);
+        this.clientId = clientId;
+        this.filterName = filterName;
+        this.ruleProperties = ruleProperties;
+        this.ip = ip;
     }
 
     public String getClientId() {

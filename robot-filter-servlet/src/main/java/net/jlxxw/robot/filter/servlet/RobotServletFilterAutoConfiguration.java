@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
@@ -13,7 +14,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.config.properties.filter.servlet.RobotFilterServletFilterProperties;
+import net.jlxxw.robot.filter.data.share.component.DataCore;
 import net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -43,7 +46,8 @@ public class RobotServletFilterAutoConfiguration implements  ServletContextIniti
     private ApplicationContext applicationContext;
     @Autowired
     private List<Filter> filters;
-
+    @Autowired
+    private DataCore dataCore;
     /**
      * Configure the given {@link ServletContext} with any servlets, filters, listeners
      * context-params and attributes necessary for initialization.
@@ -73,34 +77,44 @@ public class RobotServletFilterAutoConfiguration implements  ServletContextIniti
             if (StringUtils.isBlank(name)){
                 throw new BeanCreationException("filter name is not null !!!");
             }
-            if (nameSet.contains(name)){
-                throw new BeanCreationException("filter name repeat :" + name);
-            }
-            nameSet.add(name);
+
+
 
             Set<String> urlPattern = filterProperties.getUrlPattern();
 
-            String filterName = "robot.filter." + name;
+
             String className = filterProperties.getClassName();
-            try {
-                Class<?> clazz = Class.forName(className);
-                RobotDecisionFilter bean = (RobotDecisionFilter) clazz.newInstance();
-                if (!RobotDecisionFilter.class.isAssignableFrom(clazz)){
-                    throw new BeanCreationException("Class " + className + " must is RobotDecisionFilter subclass" );
+
+            List<RuleProperties> rules = filterProperties.getRules();
+            List<RuleProperties> collect = rules.stream().sorted(Comparator.comparing(RuleProperties::getInterval)).collect(Collectors.toList());
+
+            for (RuleProperties properties : collect) {
+                try {
+                    Class<?> clazz = Class.forName(className);
+                    RobotDecisionFilter bean = (RobotDecisionFilter) clazz.newInstance();
+                    if (!RobotDecisionFilter.class.isAssignableFrom(clazz)){
+                        throw new BeanCreationException("Class " + className + " must is RobotDecisionFilter subclass" );
+                    }
+                    bean.setFilterProperties(filterProperties);
+                    bean.setApplicationContext(applicationContext);
+                    bean.setLogUtils(logUtils);
+                    bean.setDataCore(dataCore);
+                    bean.setRuleProperties(properties);
+                    String filterName = "robot.filter." + name + ".rule." + properties.getName();
+                    if (nameSet.contains(filterName)){
+                        throw new BeanCreationException("filter name repeat :" + name);
+                    }
+                    bean.setFilterName(filterName);
+                    FilterRegistration.Dynamic dynamic = servletContext.addFilter(filterName, bean);
+
+                    String[] url = new String[urlPattern.size()];
+                    urlPattern.toArray(url);
+                    dynamic.addMappingForUrlPatterns(request,true,url);
+
+                    nameSet.add(filterName);
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                    throw new BeanCreationException(e.getMessage());
                 }
-                bean.setFilterProperties(filterProperties);
-                bean.setApplicationContext(applicationContext);
-                bean.setLogUtils(logUtils);
-
-                FilterRegistration.Dynamic dynamic = servletContext.addFilter(filterName, bean);
-
-                String[] url = new String[urlPattern.size()];
-                urlPattern.toArray(url);
-                dynamic.addMappingForUrlPatterns(request,true,url);
-
-                logUtils.info(logger,"register bean:{} class:{}",filterName,className);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                throw new BeanCreationException(e.getMessage());
             }
 
         }
