@@ -178,6 +178,48 @@ public class RobotFilterRedisClient implements DataCore {
     }
 
     /**
+     * add to temp list
+     *
+     * @param ip
+     * @param ruleProperties
+     */
+    @Override public void addIpToTempBlackList(String ip, RuleProperties ruleProperties) {
+        long time = ruleProperties.getBlacklistedTime();
+    }
+
+    /**
+     * add to temp list
+     *
+     * @param ip
+     * @param ruleProperties
+     */
+    @Override public void addClientIdToTempBlackList(String ip, RuleProperties ruleProperties) {
+        long time = ruleProperties.getBlacklistedTime();
+
+
+    }
+
+    /**
+     * check ip
+     *
+     * @param ip
+     * @return
+     */
+    @Override public boolean checkIpInTempBlackList(String ip) {
+        return false;
+    }
+
+    /**
+     * check client id
+     *
+     * @param clientId
+     * @return
+     */
+    @Override public boolean checkClientIdInTempBlackList(String clientId) {
+        return false;
+    }
+
+    /**
      * create one  prefix
      *
      * @param fileName fileName

@@ -1,6 +1,7 @@
 package net.jlxxw.robot.filter.core.data;
 
 import javax.annotation.PostConstruct;
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 
 /**
  * @author chunyang.leng
@@ -47,4 +48,31 @@ public interface DataCore {
      * @return true is pass
      */
     boolean allowClientId(String filterName,String ruleName,String clientId);
+
+    /**
+     * add to temp list
+     * @param ip
+     */
+    void addIpToTempBlackList(String ip, RuleProperties ruleProperties);
+
+
+    /**
+     * add to temp list
+     * @param ip
+     */
+    void addClientIdToTempBlackList(String ip, RuleProperties ruleProperties);
+
+    /**
+     * check ip
+     * @param ip
+     * @return
+     */
+    boolean checkIpInTempBlackList(String ip);
+
+    /**
+     * check client id
+     * @param clientId
+     * @return
+     */
+    boolean checkClientIdInTempBlackList(String clientId);
 }

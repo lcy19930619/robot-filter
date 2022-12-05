@@ -1,5 +1,7 @@
 package net.jlxxw.robot.filter.core.data;
 
+import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
+
 /**
  *
  * @author chunyang.leng
@@ -57,6 +59,46 @@ public class LocalStore implements DataCore {
      * @return true is pass
      */
     @Override public boolean allowClientId(String filterName, String ruleName, String clientId) {
+        return false;
+    }
+
+    /**
+     * add to temp list
+     *
+     * @param ip
+     * @param ruleProperties
+     */
+    @Override public void addIpToTempBlackList(String ip, RuleProperties ruleProperties) {
+
+    }
+
+    /**
+     * add to temp list
+     *
+     * @param ip
+     * @param ruleProperties
+     */
+    @Override public void addClientIdToTempBlackList(String ip, RuleProperties ruleProperties) {
+
+    }
+
+    /**
+     * check ip
+     *
+     * @param ip
+     * @return
+     */
+    @Override public boolean checkIpInTempBlackList(String ip) {
+        return false;
+    }
+
+    /**
+     * check client id
+     *
+     * @param clientId
+     * @return
+     */
+    @Override public boolean checkClientIdInTempBlackList(String clientId) {
         return false;
     }
 }
