@@ -1,8 +1,13 @@
 package net.jlxxw.robot.filter.data.share.redis;
 
 import java.net.UnknownHostException;
+import javax.annotation.PostConstruct;
+import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.data.share.redis.client.RobotFilterRedisClient;
 import net.jlxxw.robot.filter.data.share.redis.listener.RobotFilterRedisListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +23,13 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Configuration
 @ConditionalOnProperty(name = "robot.filter.share.model",havingValue = "redis")
 public class RedisAutoConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger(RedisAutoConfiguration.class);
+    @Autowired LogUtils logUtils;
+    @PostConstruct
+    private void initialize(){
+        logUtils.info(logger,"start data share model is redis ");
+    }
 
     @Bean
     @ConditionalOnMissingBean(name = "redisTemplate")

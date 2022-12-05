@@ -63,15 +63,26 @@ public class RobotFilterRedisClient implements DataCore {
                 String filterName = filter.getName();
                 List<RuleProperties> rules = filter.getRules();
                 rules.forEach(rule -> {
-                    String name = rule.getName();
-                    String key = getRedisKey(filterName, name);
-                    RULE_PROPERTIES_MAP.put(key, rule);
-                    Long max = RULE_MAX_EXPIRE_MAP.computeIfAbsent(key, k -> rule.getInterval());
-                    if (rule.getInterval() > max){
-                        RULE_MAX_EXPIRE_MAP.put(key,max);
-                    }
+                    init(filterName,rule);
                 });
             }
+        }
+    }
+
+    /**
+     * init rule
+     *
+     * @param filterName filter name
+     * @param rule rule
+     */
+    @Override
+    public void init(String filterName, RuleProperties rule) {
+        String name = rule.getName();
+        String key = getRedisKey(filterName, name);
+        RULE_PROPERTIES_MAP.put(key, rule);
+        Long max = RULE_MAX_EXPIRE_MAP.computeIfAbsent(key, k -> rule.getInterval());
+        if (rule.getInterval() > max){
+            RULE_MAX_EXPIRE_MAP.put(key,max);
         }
     }
 

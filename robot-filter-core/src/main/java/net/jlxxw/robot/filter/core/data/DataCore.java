@@ -16,6 +16,13 @@ public interface DataCore {
     void init();
 
     /**
+     * init rule
+     * @param filterName filter name
+     * @param properties rule
+     */
+    void init(String filterName,RuleProperties properties);
+
+    /**
      * ip pass inc
      * @param filterName filter name
      * @param ruleName name of the rule

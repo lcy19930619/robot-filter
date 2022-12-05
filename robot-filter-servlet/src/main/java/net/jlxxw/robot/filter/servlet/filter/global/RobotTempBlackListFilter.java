@@ -1,7 +1,6 @@
 package net.jlxxw.robot.filter.servlet.filter.global;
 
 import java.io.IOException;
-import java.util.Objects;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -10,7 +9,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
-import net.jlxxw.robot.filter.core.black.BlackList;
+import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ public class RobotTempBlackListFilter implements Filter {
     private LogUtils logUtils;
 
     @Autowired
-    private BlackList blackList;
+    private DataCore dataCore;
     /**
      * Called by the web container to indicate to a filter that it is being
      * placed into service. The servlet container calls the init method exactly
@@ -113,16 +112,17 @@ public class RobotTempBlackListFilter implements Filter {
         String clientId = RobotServletFilterWebContext.getClientId();
         String ip = RobotServletFilterWebContext.getIp();
 
-        RuleProperties properties = blackList.inBlackList(ip);
-        if (Objects.nonNull(properties)){
-            logUtils.warn(logger, "temp blacklist already filter ip:{} client id:{}",ip,clientId);
-            throw new RuleException(" in black list",properties);
+        boolean ipInTempBlackList = dataCore.checkIpInTempBlackList(ip);
+        if (ipInTempBlackList){
+            logUtils.warn(logger, "temp blacklist already filter ip:{}",ip);
+            throw new RuleException(" in black list",new RuleProperties());
         }
 
-        properties = blackList.inBlackList(clientId);
-        if (Objects.nonNull(properties)){
-            logUtils.warn(logger, "temp blacklist already filter ip:{} client id:{}",ip,clientId);
-            throw new RuleException(" in black list",properties);
+
+        boolean clientIdInTempBlackList = dataCore.checkClientIdInTempBlackList(clientId);
+        if (clientIdInTempBlackList){
+            logUtils.warn(logger, "temp blacklist already filter clientId:{}",clientId);
+            throw new RuleException(" in black list",new RuleProperties());
         }
 
         chain.doFilter(request, response);

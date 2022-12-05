@@ -8,19 +8,17 @@ import org.springframework.context.ApplicationEvent;
  * @author chunyang.leng
  * @date 2022-11-09 4:23 PM
  */
-public class AddClientToBlackListEvent extends ApplicationEvent {
+public class AddClientIdToBlackListEvent extends ApplicationEvent {
 
-    private String ip;
-    private String clientId;
-    private String filterName;
-    private RuleProperties ruleProperties;
+    private final String clientId;
+    private final String filterName;
+    private final RuleProperties ruleProperties;
 
-    public AddClientToBlackListEvent(String ip,String clientId,String filterName, RuleProperties ruleProperties){
+    public AddClientIdToBlackListEvent(String clientId,String filterName, RuleProperties ruleProperties){
         super(clientId);
         this.clientId = clientId;
         this.filterName = filterName;
         this.ruleProperties = ruleProperties;
-        this.ip = ip;
     }
 
     public String getClientId() {
@@ -35,7 +33,4 @@ public class AddClientToBlackListEvent extends ApplicationEvent {
         return ruleProperties;
     }
 
-    public String getIp() {
-        return ip;
-    }
 }

@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.data.share.component;
+package net.jlxxw.robot.filter.data.share.netty.adapter;
 
 import java.util.Set;
 
@@ -12,6 +12,7 @@ public interface DiscoveryClientAdapter {
     /**
      * find cluster ,get all node ip and port
      * @return node ip list
+     * format ip:port
      */
     Set<String> getClusterClientIpList();
 }

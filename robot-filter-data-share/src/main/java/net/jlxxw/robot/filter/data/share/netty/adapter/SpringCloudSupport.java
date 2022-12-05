@@ -1,22 +1,17 @@
-package net.jlxxw.robot.filter.data.share.cloud;
+package net.jlxxw.robot.filter.data.share.netty.adapter;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.jlxxw.robot.filter.data.share.component.DiscoveryClientAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.stereotype.Component;
 
 /**
  * @author chunyang.leng
  * @date 2022-11-03 5:11 PM
  */
-@ConditionalOnMissingBean(DiscoveryClientAdapter.class)
-@Component
 public class SpringCloudSupport implements DiscoveryClientAdapter {
 
     @Autowired
@@ -30,15 +25,12 @@ public class SpringCloudSupport implements DiscoveryClientAdapter {
      * find cluster ,get every on node ip
      *
      * @return node ip list
+     * only ip
      */
     @Override
     public Set<String> getClusterClientIpList() {
         List<ServiceInstance> instances = discoveryClient.getInstances(applicationName);
 
-        return instances.stream().map(x->{
-            String host = x.getHost();
-            int port = x.getPort();
-            return host+":"+port;
-        }).collect(Collectors.toSet());
+        return instances.stream().map(ServiceInstance::getHost).collect(Collectors.toSet());
     }
 }

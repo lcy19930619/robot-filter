@@ -7,7 +7,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import net.jlxxw.robot.filter.common.event.AddClientToBlackListEvent;
+import net.jlxxw.robot.filter.common.event.AddClientIdToBlackListEvent;
+import net.jlxxw.robot.filter.common.event.AddIpToBlackListEvent;
 import net.jlxxw.robot.filter.common.event.ReceiveRequestEvent;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
@@ -95,12 +96,12 @@ public class RobotDecisionFilter implements Filter {
 
             boolean allow = dataCore.allowClientId(filterProperties.getName(), ruleProperties.getName(), clientId);
             if (!allow) {
-                applicationContext.publishEvent(new AddClientToBlackListEvent(ip, clientId, filterProperties.getName(), ruleProperties));
+                applicationContext.publishEvent(new AddClientIdToBlackListEvent( clientId, filterProperties.getName(), ruleProperties));
                 throw new RuleException("reject request, max allow !!!", ruleProperties);
             }
             allow = dataCore.allowIp(filterProperties.getName(), ruleProperties.getName(), ip);
             if (!allow) {
-                applicationContext.publishEvent(new AddClientToBlackListEvent(ip, clientId, filterProperties.getName(), ruleProperties));
+                applicationContext.publishEvent(new AddIpToBlackListEvent(ip, filterProperties.getName(), ruleProperties));
                 throw new RuleException("reject request, max allow !!!", ruleProperties);
             }
 

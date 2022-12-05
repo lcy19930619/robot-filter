@@ -69,6 +69,12 @@ public class NettyClient implements Closeable {
     private int retryDelay;
 
     private SslContext sslContext;
+
+    public NettyClient(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
+
     @PostConstruct
     public void start()  {
         retryMaxCount = dataShareProperties.getNetty().getClient().getRetryMaxCount();
@@ -170,5 +176,13 @@ public class NettyClient implements Closeable {
         channel.deregister();
         channel.close();
         group.shutdownGracefully();
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 }
