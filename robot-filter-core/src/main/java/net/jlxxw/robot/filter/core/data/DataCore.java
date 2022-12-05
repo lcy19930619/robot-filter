@@ -1,4 +1,4 @@
-package net.jlxxw.robot.filter.data.share.component;
+package net.jlxxw.robot.filter.core.data;
 
 import javax.annotation.PostConstruct;
 

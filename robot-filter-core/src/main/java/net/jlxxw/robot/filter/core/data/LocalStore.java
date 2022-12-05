@@ -1,7 +1,5 @@
 package net.jlxxw.robot.filter.core.data;
 
-import net.jlxxw.robot.filter.data.share.component.DataCore;
-
 /**
  *
  * @author chunyang.leng

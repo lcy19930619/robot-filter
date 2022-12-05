@@ -13,7 +13,7 @@ import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.config.properties.ui.UiProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.core.vo.base.RequestResult;
-import net.jlxxw.robot.filter.data.share.component.DataCore;
+import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import net.jlxxw.robot.filter.web.aop.LoginCheck;
 import net.jlxxw.robot.filter.web.dto.LoginDTO;

@@ -13,7 +13,7 @@ import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
-import net.jlxxw.robot.filter.data.share.component.DataCore;
+import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.servlet.context.RobotServletFilterWebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

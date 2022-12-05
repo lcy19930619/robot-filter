@@ -7,13 +7,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.RobotFilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.core.exception.RuleException;
 import net.jlxxw.robot.filter.servlet.filter.global.RobotGlobalAuthorizationWhiteFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +138,11 @@ public class RobotResponseFilter implements Filter {
         servletResponse.setContentType(contentType);
         servletResponse.setStatus(httpCode);
         if (returnRejectMessage) {
-            servletResponse.getWriter().println(e.getMessage());
+            String message = e.getMessage();
+            if (StringUtils.isNotBlank(properties.getRejectMessage())){
+                message = properties.getRejectMessage();
+            }
+            servletResponse.getWriter().println(message);
         }
         logUtils.info(logger, "RobotResponseFilter handler rejected message:{}",e.getMessage());
 

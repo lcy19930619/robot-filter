@@ -9,7 +9,7 @@ import net.jlxxw.robot.filter.config.properties.data.redis.RobotFilterRedisPrope
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.config.properties.filter.servlet.RobotFilterServletFilterProperties;
-import net.jlxxw.robot.filter.data.share.component.DataCore;
+import net.jlxxw.robot.filter.core.data.DataCore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;

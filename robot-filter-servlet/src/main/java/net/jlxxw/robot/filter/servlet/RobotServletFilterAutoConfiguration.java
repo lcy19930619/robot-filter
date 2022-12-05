@@ -16,7 +16,7 @@ import net.jlxxw.robot.filter.common.log.LogUtils;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
 import net.jlxxw.robot.filter.config.properties.filter.servlet.RobotFilterServletFilterProperties;
-import net.jlxxw.robot.filter.data.share.component.DataCore;
+import net.jlxxw.robot.filter.core.data.DataCore;
 import net.jlxxw.robot.filter.servlet.filter.decision.RobotDecisionFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

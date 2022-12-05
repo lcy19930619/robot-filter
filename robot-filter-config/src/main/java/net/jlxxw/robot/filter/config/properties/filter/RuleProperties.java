@@ -55,6 +55,11 @@ public class RuleProperties {
      */
     private boolean returnRejectMessage = false;
 
+    /**
+     * reject message
+     */
+    private String rejectMessage = "";
+
     public long getInterval() {
         return interval;
     }
@@ -126,5 +131,13 @@ public class RuleProperties {
 
     public void setReturnRejectMessage(boolean returnRejectMessage) {
         this.returnRejectMessage = returnRejectMessage;
+    }
+
+    public String getRejectMessage() {
+        return rejectMessage;
+    }
+
+    public void setRejectMessage(String rejectMessage) {
+        this.rejectMessage = rejectMessage;
     }
 }
