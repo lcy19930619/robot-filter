@@ -96,12 +96,12 @@ public class RobotDecisionFilter implements Filter {
             boolean allow = dataCore.allowClientId(filterProperties.getName(), ruleProperties.getName(), clientId);
             if (!allow) {
                 applicationContext.publishEvent(new AddClientToBlackListEvent(ip, clientId, filterProperties.getName(), ruleProperties));
-                throw new RuleException("", ruleProperties);
+                throw new RuleException("reject request, max allow !!!", ruleProperties);
             }
             allow = dataCore.allowIp(filterProperties.getName(), ruleProperties.getName(), ip);
             if (!allow) {
                 applicationContext.publishEvent(new AddClientToBlackListEvent(ip, clientId, filterProperties.getName(), ruleProperties));
-                throw new RuleException("", ruleProperties);
+                throw new RuleException("reject request, max allow !!!", ruleProperties);
             }
 
             ReceiveRequestEvent event = new ReceiveRequestEvent(ip, host, clientId, filterProperties.getName(), ruleProperties.getName());

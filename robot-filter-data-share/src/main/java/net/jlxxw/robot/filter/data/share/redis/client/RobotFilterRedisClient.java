@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import net.jlxxw.robot.filter.config.properties.data.redis.RobotFilterRedisProperties;
 import net.jlxxw.robot.filter.config.properties.filter.FilterProperties;
 import net.jlxxw.robot.filter.config.properties.filter.RuleProperties;
@@ -22,12 +23,18 @@ import org.springframework.util.CollectionUtils;
 public class RobotFilterRedisClient implements DataCore {
     private static final Map<String, RuleProperties> RULE_PROPERTIES_MAP = new HashMap<>();
 
+    /**
+     * key redis key prefix
+     * value expire time unit is milliseconds
+     */
+    private static final Map<String, Long> RULE_MAX_EXPIRE_MAP = new HashMap<>();
+
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
     @Autowired
     private RobotFilterServletFilterProperties robotFilterServletFilterProperties;
     @Autowired
-    private RobotFilterRedisProperties redisProperties;
+    private RobotFilterRedisProperties robotFilterRedisProperties;
 
     /**
      * init data store
@@ -46,8 +53,11 @@ public class RobotFilterRedisClient implements DataCore {
                     String name = rule.getName();
                     String key = getRedisKey(filterName, name);
                     RULE_PROPERTIES_MAP.put(key, rule);
+                    Long max = RULE_MAX_EXPIRE_MAP.computeIfAbsent(key, k -> rule.getInterval());
+                    if (rule.getInterval() > max){
+                        RULE_MAX_EXPIRE_MAP.put(key,max);
+                    }
                 });
-
             }
         }
     }
@@ -80,8 +90,10 @@ public class RobotFilterRedisClient implements DataCore {
 
         operations.add(key + ":ip:" + ip, value, currentTimeMillis);
 
-        // todo expire
-        // redisTemplate.expire
+        Long max = RULE_MAX_EXPIRE_MAP.get(key);
+
+        // expire
+        redisTemplate.expire(key,max, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -115,8 +127,10 @@ public class RobotFilterRedisClient implements DataCore {
 
         operations.add(key + ":clientId:" + clientId, value, currentTimeMillis);
 
-        // todo expire
-        // redisTemplate.expire
+        Long max = RULE_MAX_EXPIRE_MAP.get(key);
+
+        // expire
+        redisTemplate.expire(key,max, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -185,16 +199,27 @@ public class RobotFilterRedisClient implements DataCore {
      */
     @Override public void addIpToTempBlackList(String ip, RuleProperties ruleProperties) {
         long time = ruleProperties.getBlacklistedTime();
+
+        String prefix = robotFilterRedisProperties.getPrefix();
+        String key = prefix + "temp:black:ip:" + ip;
+
+        redisTemplate.opsForValue().set(key,"1",time, TimeUnit.SECONDS);
+
     }
 
     /**
      * add to temp list
      *
-     * @param ip
+     * @param clientId
      * @param ruleProperties
      */
-    @Override public void addClientIdToTempBlackList(String ip, RuleProperties ruleProperties) {
+    @Override public void addClientIdToTempBlackList(String clientId, RuleProperties ruleProperties) {
         long time = ruleProperties.getBlacklistedTime();
+
+        String prefix = robotFilterRedisProperties.getPrefix();
+        String key = prefix + "temp:black:clientId:" + clientId;
+
+        redisTemplate.opsForValue().set(key,"1",time, TimeUnit.SECONDS);
 
 
     }
@@ -205,8 +230,11 @@ public class RobotFilterRedisClient implements DataCore {
      * @param ip
      * @return
      */
-    @Override public boolean checkIpInTempBlackList(String ip) {
-        return false;
+    @Override
+    public boolean checkIpInTempBlackList(String ip) {
+        String prefix = robotFilterRedisProperties.getPrefix();
+        String key = prefix + "temp:black:ip:" + ip;
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
     /**
@@ -215,8 +243,11 @@ public class RobotFilterRedisClient implements DataCore {
      * @param clientId
      * @return
      */
-    @Override public boolean checkClientIdInTempBlackList(String clientId) {
-        return false;
+    @Override
+    public boolean checkClientIdInTempBlackList(String clientId) {
+        String prefix = robotFilterRedisProperties.getPrefix();
+        String key = prefix + "temp:black:clientId:" + clientId;
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
     /**
@@ -227,7 +258,7 @@ public class RobotFilterRedisClient implements DataCore {
      * @return redis key prefix
      */
     private String getRedisKey(String fileName, String ruleName) {
-        String prefix = redisProperties.getPrefix();
+        String prefix = robotFilterRedisProperties.getPrefix();
         return prefix + "filter:" + fileName + ":rule:" + ruleName;
     }
 
