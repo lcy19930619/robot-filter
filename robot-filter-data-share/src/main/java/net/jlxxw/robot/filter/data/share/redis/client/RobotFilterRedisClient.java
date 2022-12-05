@@ -250,8 +250,14 @@ public class RobotFilterRedisClient implements DataCore {
         String prefix = robotFilterRedisProperties.getPrefix();
         String key = prefix + "temp:black:clientId:" + clientId;
 
-        redisTemplate.opsForValue().set(key,"1",time, TimeUnit.SECONDS);
-
+        boolean addBlacklisted = ruleProperties.isAllowAddBlacklisted();
+        if (addBlacklisted){
+            redisTemplate.opsForValue().set(key,"1");
+        }
+        boolean removeBlacklisted = ruleProperties.isAllowRemoveBlacklisted();
+        if (removeBlacklisted){
+            redisTemplate.expire(key,time, TimeUnit.SECONDS);
+        }
 
     }
 
