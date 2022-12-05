@@ -21,11 +21,24 @@ import org.springframework.util.CollectionUtils;
  * @date 2022-12-05 12:20 PM
  */
 public class RobotFilterRedisClient implements DataCore {
+
+    /**
+     * key
+     *      redis key prefix,
+     *  demo:
+     *      {redisPrefix}filterName:ruleName
+     * value
+     *      every one rule
+     */
     private static final Map<String, RuleProperties> RULE_PROPERTIES_MAP = new HashMap<>();
 
     /**
-     * key redis key prefix
-     * value expire time unit is milliseconds
+     * key
+     *      redis key prefix,
+     *  demo:
+     *      {redisPrefix}filterName:ruleName
+     * value
+     *      max expire time unit is milliseconds
      */
     private static final Map<String, Long> RULE_MAX_EXPIRE_MAP = new HashMap<>();
 
@@ -203,7 +216,14 @@ public class RobotFilterRedisClient implements DataCore {
         String prefix = robotFilterRedisProperties.getPrefix();
         String key = prefix + "temp:black:ip:" + ip;
 
-        redisTemplate.opsForValue().set(key,"1",time, TimeUnit.SECONDS);
+        boolean addBlacklisted = ruleProperties.isAllowAddBlacklisted();
+        if (addBlacklisted){
+            redisTemplate.opsForValue().set(key,"1");
+        }
+        boolean removeBlacklisted = ruleProperties.isAllowRemoveBlacklisted();
+        if (removeBlacklisted){
+            redisTemplate.expire(key,time, TimeUnit.SECONDS);
+        }
 
     }
 

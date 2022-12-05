@@ -10,18 +10,13 @@ import java.util.Set;
  */
 public class FilterProperties {
     /**
-     * filter name,globally unique
-     */
-    private String name = "default-filter";
-    /**
-     * lru limit
-     */
-    private int lru = 200;
-    /**
      * enable filter
      */
     private boolean enabled = true;
-
+    /**
+     * filter name,globally unique
+     */
+    private String name = "default-filter";
     /**
      * url pattern,un support refresh
      */
@@ -84,14 +79,6 @@ public class FilterProperties {
 
     public void setRules(List<RuleProperties> rules) {
         this.rules = rules;
-    }
-
-    public int getLru() {
-        return lru;
-    }
-
-    public void setLru(int lru) {
-        this.lru = lru;
     }
 
     public String getClassName() {
